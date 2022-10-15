@@ -29,6 +29,11 @@ void MainWindow::CreateActions()
 {
 	// Buttons
     connect(uiw->boxMesh, SIGNAL(clicked()), this, SLOT(BoxMeshExample()));
+    connect(uiw->diskMesh, SIGNAL(clicked()), this, SLOT(DiskMeshExample()));
+    connect(uiw->cylinderMesh, SIGNAL(clicked()), this, SLOT(CylinderMeshExample()));
+    connect(uiw->sphereMesh, SIGNAL(clicked()), this, SLOT(SphereMeshExample()));
+    connect(uiw->torusMesh, SIGNAL(clicked()), this, SLOT(TorusMeshExample()));
+    connect(uiw->capsuleMesh, SIGNAL(clicked()), this, SLOT(CapsuleMeshExample()));
     connect(uiw->sphereImplicit, SIGNAL(clicked()), this, SLOT(SphereImplicitExample()));
     connect(uiw->resetcameraButton, SIGNAL(clicked()), this, SLOT(ResetCamera()));
     connect(uiw->wireframe, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
@@ -59,6 +64,71 @@ void MainWindow::BoxMeshExample()
 
 	meshColor = MeshColor(boxMesh, cols, boxMesh.VertexIndexes());
 	UpdateGeometry();
+}
+
+void MainWindow::DiskMeshExample()
+{
+    Mesh diskMesh = Mesh(Disk(2), 32);
+
+    // std::vector<Color> cols;
+    // cols.resize(diskMesh.Vertexes());
+    // for (int i = 0; i < cols.size(); i++)
+    // 	cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
+
+    meshColor = MeshColor(diskMesh);
+    UpdateGeometry();
+}
+
+void MainWindow::CylinderMeshExample()
+{
+    Mesh cylinderMesh = Mesh(Cylinder(4, 2), 64);
+
+    // std::vector<Color> cols;
+    // cols.resize(diskMesh.Vertexes());*
+    // for (int i = 0; i < cols.size(); i++)
+    // 	cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
+
+    meshColor = MeshColor(cylinderMesh);
+    UpdateGeometry();
+}
+
+void MainWindow::SphereMeshExample()
+{
+    Mesh torusMesh = Mesh(Sphere(3), 32);
+
+    // std::vector<Color> cols;
+    // cols.resize(diskMesh.Vertexes());*
+    // for (int i = 0; i < cols.size(); i++)
+    // 	cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
+
+    meshColor = MeshColor(torusMesh);
+    UpdateGeometry();
+}
+
+void MainWindow::TorusMeshExample()
+{
+    Mesh torusMesh = Mesh(Torus(3, 2), 32, 32);
+
+    // std::vector<Color> cols;
+    // cols.resize(diskMesh.Vertexes());*
+    // for (int i = 0; i < cols.size(); i++)
+    // 	cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
+
+    meshColor = MeshColor(torusMesh);
+    UpdateGeometry();
+}
+
+void MainWindow::CapsuleMeshExample()
+{
+    Mesh capsuleMesh = Mesh(Capsule(4, 2), 32);
+
+    // std::vector<Color> cols;
+    // cols.resize(diskMesh.Vertexes());*
+    // for (int i = 0; i < cols.size(); i++)
+    // 	cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
+
+    meshColor = MeshColor(capsuleMesh);
+    UpdateGeometry();
 }
 
 void MainWindow::SphereImplicitExample()

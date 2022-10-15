@@ -203,6 +203,199 @@ Mesh::Mesh(const Box& box)
   AddTriangle(6, 7, 2, 3);
 }
 
+Mesh::Mesh(const Disk& disk, int n)
+{
+  // Vertices
+  // n+1 with the center
+  vertices.resize(n+1);
+
+  vertices[0] = Vector(0, 0, 0);
+  for (int i = 1; i < n+1; i++)
+  {
+    double theta = 2*M_PI*i/n;
+    double x = std::cos(theta) * disk.Radius();
+    double y = std::sin(theta) * disk.Radius();
+    vertices[i] = Vector(x, y, 0);
+  }
+
+  // Normal
+  normals.push_back(Vector(0, 0, 1));
+
+  // Reserve space for the triangle array
+  varray.reserve(n * 3);
+  narray.reserve(n * 3);
+
+  for (int i = 0; i < n; i++)
+  {
+    int firstI = i+1;
+    int secondI = (i+1) % n + 1;
+    AddTriangle(0, firstI, secondI, 0);
+  }
+}
+
+Mesh::Mesh(const Cylinder& cylinder, int n)
+{
+  // Vertices
+  // 2*n+2 -> 2*n for bottom and top vertices and +2 for the two disk centers
+  vertices.resize(2*n+2);
+
+  vertices[0] = Vector(0, 0, cylinder.Height() / 2);
+  vertices[1] = Vector(0, 0, -cylinder.Height() / 2);
+  normals.push_back(Vector(0, 0, 1));
+  normals.push_back(Vector(0, 0, -1));
+  for (int i = 2; i < 2*n+2; i+=2)
+  {
+    double theta = 2*M_PI*(double)(i/2)/(double)(n);
+    double x = std::cos(theta) * cylinder.Radius();
+    double y = std::sin(theta) * cylinder.Radius();
+    double z = cylinder.Height() / 2;
+    vertices[i] = Vector(x, y, z); // Top
+    vertices[i+1] = Vector(x, y, -z); // Bottom
+    normals.push_back(Vector(x, y, 0));
+  }
+
+  // Reserve space for the triangle array
+  varray.reserve((4*n) * 3);
+  narray.reserve((4*n) * 3);
+
+  for (int i = 2; i <= n*2; i+=2)
+  {
+    int firstI = i;
+    int secondI = i+1;
+    int thirdI = i % (n*2) + 2;
+    int fourthI = i % (n*2) + 3;
+    AddTriangle(0, firstI, thirdI, 0); // Top disk triangle
+    AddTriangle(1, secondI, fourthI, 1); // Bottom disk triangle
+    AddTriangle(firstI, secondI, fourthI, 1 + i/2); // First triangle of cylinder
+    AddTriangle(fourthI, thirdI, firstI, 1 + i/2); // Second triangle of cylinder
+  }
+}
+
+Mesh::Mesh(const Sphere& sphere, int n)
+{
+  // Vertices
+  vertices.resize((n+1) * n);
+
+  for (int i = 0; i < n+1; i++)
+  {
+    for (int j = 0; j < n; j++)
+    {
+      double theta_lat = M_PI*(double)i/(double)(n);
+      double theta_long = 2*M_PI*(double)j/(double)(n);
+      double x = std::sin(theta_lat) * std::cos(theta_long) * sphere.Radius();
+      double y = std::sin(theta_lat) * std::sin(theta_long) * sphere.Radius();
+      double z = std::cos(theta_lat) * sphere.Radius();
+      vertices[j + n * i] = Vector(x, y, z);
+      normals.push_back(Vector(x, y, z));
+    }
+  }
+
+  // Reserve space for the triangle array
+  varray.reserve((n * n) * 3);
+  narray.reserve((n * n) * 3);
+
+  for (int i = 0; i < n; i++)
+  {
+    int i_next = i+1;
+    for (int j = 0; j < n; j++)
+    {
+      int j_next = (j+1) % n;
+      int firstI = i * n + j;
+      int secondI = i * n + j_next;
+      int thirdI = i_next * n + j;
+      int fourthI = i_next * n + j_next;
+      AddTriangle(firstI, secondI, thirdI, firstI);
+      AddTriangle(secondI, thirdI, fourthI, firstI);
+    }
+  }
+}
+
+Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
+{
+  // Vertices
+  vertices.resize(n_toroidal * n_poloidal);
+
+  for (int i = 0; i < n_toroidal; i++)
+  {
+    for (int j = 0; j < n_poloidal; j++)
+    {
+      double theta_toroidal = 2*M_PI*(double)i/(double)n_toroidal;
+      double theta_poloidal = 2*M_PI*(double)j/(double)(n_poloidal);
+      double x = std::cos(theta_poloidal) * ((std::cos(theta_toroidal) * torus.Thickness()) + torus.Radius());
+      double y = std::sin(theta_poloidal) * ((std::cos(theta_toroidal) * torus.Thickness()) + torus.Radius());
+      double z = std::sin(theta_toroidal) * torus.Thickness();
+      vertices[j + n_poloidal * i] = Vector(x, y, z);
+      normals.push_back(Vector(x, y, z));
+    }
+  }
+
+  // Reserve space for the triangle array
+  varray.reserve((n_toroidal * n_poloidal) * 3);
+  narray.reserve((n_toroidal * n_poloidal) * 3);
+
+  for (int i = 0; i < n_toroidal; i++)
+  {
+    int i_next = (i+1) % n_toroidal;
+    for (int j = 0; j < n_poloidal; j++)
+    {
+      int j_next = (j+1) % n_poloidal;
+      int firstI = i * n_poloidal + j;
+      int secondI = i * n_poloidal + j_next;
+      int thirdI = i_next * n_poloidal + j;
+      int fourthI = i_next * n_poloidal + j_next;
+      AddTriangle(firstI, secondI, thirdI, firstI);
+      AddTriangle(secondI, thirdI, fourthI, firstI);
+    }
+  }
+}
+
+Mesh::Mesh(const Capsule& capsule, int n)
+{
+  // Vertices
+  vertices.resize((n+1) * n);
+
+  for (int i = 0; i < n+1; i++)
+  {
+    for (int j = 0; j < n; j++)
+    {
+      double theta_lat = M_PI*(double)i/(double)(n);
+      double theta_long = 2*M_PI*(double)j/(double)(n);
+      double x = std::sin(theta_lat) * std::cos(theta_long) * capsule.Radius();
+      double y = std::sin(theta_lat) * std::sin(theta_long) * capsule.Radius();
+      double z = std::cos(theta_lat) * capsule.Radius();
+      if (i < n / 2)
+      {
+        vertices[j + n * i] = Vector(x, y, z + capsule.Height() / 2);
+        normals.push_back(Vector(x, y, z + capsule.Height() / 2));
+      }
+      else
+      {
+        vertices[j + n * i] = Vector(x, y, z - capsule.Height() / 2);
+        normals.push_back(Vector(x, y, z - capsule.Height() / 2));
+      }
+    }
+  }
+
+  // Reserve space for the triangle array
+  varray.reserve((n * n) * 3);
+  narray.reserve((n * n) * 3);
+
+  for (int i = 0; i < n; i++)
+  {
+    int i_next = i+1;
+    for (int j = 0; j < n; j++)
+    {
+      int j_next = (j+1) % n;
+      int firstI = i * n + j;
+      int secondI = i * n + j_next;
+      int thirdI = i_next * n + j;
+      int fourthI = i_next * n + j_next;
+      AddTriangle(firstI, secondI, thirdI, firstI);
+      AddTriangle(secondI, thirdI, fourthI, firstI);
+    }
+  }
+}
+
 /*!
 \brief Scale the mesh.
 \param s Scaling factor.

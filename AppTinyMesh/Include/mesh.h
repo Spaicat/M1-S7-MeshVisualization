@@ -1,6 +1,12 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
 #include "box.h"
+#include "disk.h"
+#include "cylinder.h"
+#include "sphere.h"
+#include "torus.h"
+#include "capsule.h"
 #include "ray.h"
 #include "mathematics.h"
 
@@ -120,6 +126,11 @@ public:
 
   // Constructors from core classes
   explicit Mesh(const Box&);
+  explicit Mesh(const Disk&, int);
+  explicit Mesh(const Cylinder&, int);
+  explicit Mesh(const Sphere&, int);
+  explicit Mesh(const Torus&, int, int);
+  explicit Mesh(const Capsule&, int);
 
   void Load(const QString&);
   void SaveObj(const QString&, const QString&) const;
