@@ -245,7 +245,7 @@ Mesh::Mesh(const Cylinder& cylinder, int n)
   normals.push_back(Vector(0, 0, -1));
   for (int i = 2; i < 2*n+2; i+=2)
   {
-    double theta = 2*M_PI*(double)(i/2)/(double)(n);
+    double theta = 2*M_PI*i/2/n;
     double x = std::cos(theta) * cylinder.Radius();
     double y = std::sin(theta) * cylinder.Radius();
     double z = cylinder.Height() / 2;
@@ -274,18 +274,18 @@ Mesh::Mesh(const Cylinder& cylinder, int n)
 Mesh::Mesh(const Sphere& sphere, int n)
 {
   // Vertices
-  vertices.resize((n+1) * n);
+  vertices.resize(n*n + 2);
 
-  for (int i = 0; i < n+1; i++)
+  for (int i = 0; i < n-1; i++)
   {
+    double phi = M_PI*(i+1)/n;
     for (int j = 0; j < n; j++)
     {
-      double theta_lat = M_PI*(double)i/(double)(n);
-      double theta_long = 2*M_PI*(double)j/(double)(n);
-      double x = std::sin(theta_lat) * std::cos(theta_long) * sphere.Radius();
-      double y = std::sin(theta_lat) * std::sin(theta_long) * sphere.Radius();
-      double z = std::cos(theta_lat) * sphere.Radius();
-      vertices[j + n * i] = Vector(x, y, z);
+      double theta = 2*M_PI*j/n;
+      double x = std::sin(phi) * std::cos(theta) * sphere.Radius();
+      double y = std::sin(phi) * std::sin(theta) * sphere.Radius();
+      double z = std::cos(phi) * sphere.Radius();
+      vertices[j + n * i + 1] = Vector(x, y, z);
       normals.push_back(Vector(x, y, z));
     }
   }
@@ -294,18 +294,34 @@ Mesh::Mesh(const Sphere& sphere, int n)
   varray.reserve((n * n) * 3);
   narray.reserve((n * n) * 3);
 
+  // Top and Bottom vertices and triangles
+  int lastElement = n*(n-1) + 2;
+  vertices[0] = Vector(0, 0, sphere.Radius());
+  vertices[lastElement] = Vector(0, 0, -sphere.Radius());
+
   for (int i = 0; i < n; i++)
+  {
+    int firstI = i+1;
+    int secondI = (i+1) % n + 1;
+    AddTriangle(0, firstI, secondI, i);
+    firstI += n*(n-2);
+    secondI += n*(n-2);
+    AddTriangle(lastElement, firstI, secondI, i + n*(n-2));
+  }
+
+  // All the remaining sphere
+  for (int i = 0; i < n-2; i++) // n-2 to remove top and bottom vertices
   {
     int i_next = i+1;
     for (int j = 0; j < n; j++)
     {
       int j_next = (j+1) % n;
-      int firstI = i * n + j;
-      int secondI = i * n + j_next;
-      int thirdI = i_next * n + j;
-      int fourthI = i_next * n + j_next;
-      AddTriangle(firstI, secondI, thirdI, firstI);
-      AddTriangle(secondI, thirdI, fourthI, firstI);
+      int firstI = i * n + j + 1;
+      int secondI = i * n + j_next + 1;
+      int thirdI = i_next * n + j + 1;
+      int fourthI = i_next * n + j_next + 1;
+      AddTriangle(firstI, secondI, thirdI, firstI-1);
+      AddTriangle(secondI, thirdI, fourthI, firstI-1);
     }
   }
 }
@@ -319,8 +335,8 @@ Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
   {
     for (int j = 0; j < n_poloidal; j++)
     {
-      double theta_toroidal = 2*M_PI*(double)i/(double)n_toroidal;
-      double theta_poloidal = 2*M_PI*(double)j/(double)(n_poloidal);
+      double theta_toroidal = 2*M_PI*i/n_toroidal;
+      double theta_poloidal = 2*M_PI*j/n_poloidal;
       double x = std::cos(theta_poloidal) * ((std::cos(theta_toroidal) * torus.Thickness()) + torus.Radius());
       double y = std::sin(theta_poloidal) * ((std::cos(theta_toroidal) * torus.Thickness()) + torus.Radius());
       double z = std::sin(theta_toroidal) * torus.Thickness();
@@ -352,48 +368,65 @@ Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
 Mesh::Mesh(const Capsule& capsule, int n)
 {
   // Vertices
-  vertices.resize((n+1) * n);
+  vertices.resize(n*n + 2);
 
-  for (int i = 0; i < n+1; i++)
+  for (int i = 0; i < n-1; i++)
   {
+    double phi = M_PI*(i+1)/n;
     for (int j = 0; j < n; j++)
     {
-      double theta_lat = M_PI*(double)i/(double)(n);
-      double theta_long = 2*M_PI*(double)j/(double)(n);
-      double x = std::sin(theta_lat) * std::cos(theta_long) * capsule.Radius();
-      double y = std::sin(theta_lat) * std::sin(theta_long) * capsule.Radius();
-      double z = std::cos(theta_lat) * capsule.Radius();
+      double theta = 2*M_PI*j/n;
+      double x = std::sin(phi) * std::cos(theta) * capsule.Radius();
+      double y = std::sin(phi) * std::sin(theta) * capsule.Radius();
+      double z = std::cos(phi) * capsule.Radius();
       if (i < n / 2)
       {
-        vertices[j + n * i] = Vector(x, y, z + capsule.Height() / 2);
+        vertices[j + n * i + 1] = Vector(x, y, z + capsule.Height() / 2);
         normals.push_back(Vector(x, y, z + capsule.Height() / 2));
       }
       else
       {
-        vertices[j + n * i] = Vector(x, y, z - capsule.Height() / 2);
+        vertices[j + n * i + 1] = Vector(x, y, z - capsule.Height() / 2);
         normals.push_back(Vector(x, y, z - capsule.Height() / 2));
       }
     }
   }
 
   // Reserve space for the triangle array
-  varray.reserve((n * n) * 3);
-  narray.reserve((n * n) * 3);
+  varray.reserve((n * n*n) * 3);
+  narray.reserve((n * n*n) * 3);
+
+  // Top and Bottom vertices and triangles
+  int lastElement = n*(n-1) + 2;
+  vertices[0] = Vector(0, 0, (capsule.Height() / 2) + capsule.Radius());
+  vertices[lastElement] = Vector(0, 0, - (capsule.Height() / 2) - capsule.Radius());
 
   for (int i = 0; i < n; i++)
+  {
+    int firstI = i+1;
+    int secondI = (i+1) % n + 1;
+    AddTriangle(0, firstI, secondI, i);
+    firstI += n*(n-2);
+    secondI += n*(n-2);
+    AddTriangle(lastElement, firstI, secondI, i + n*(n-2));
+  }
+
+  // All the remaining sphere
+  for (int i = 0; i < n-2; i++) // n-2 to remove top and bottom vertices
   {
     int i_next = i+1;
     for (int j = 0; j < n; j++)
     {
       int j_next = (j+1) % n;
-      int firstI = i * n + j;
-      int secondI = i * n + j_next;
-      int thirdI = i_next * n + j;
-      int fourthI = i_next * n + j_next;
-      AddTriangle(firstI, secondI, thirdI, firstI);
-      AddTriangle(secondI, thirdI, fourthI, firstI);
+      int firstI = i * n + j + 1;
+      int secondI = i * n + j_next + 1;
+      int thirdI = i_next * n + j + 1;
+      int fourthI = i_next * n + j_next + 1;
+      AddTriangle(firstI, secondI, thirdI, firstI-1);
+      AddTriangle(secondI, thirdI, fourthI, firstI-1);
     }
   }
+  // ---------------------------------------------------------------
 }
 
 /*!

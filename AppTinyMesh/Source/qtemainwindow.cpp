@@ -94,7 +94,7 @@ void MainWindow::CylinderMeshExample()
 
 void MainWindow::SphereMeshExample()
 {
-    Mesh torusMesh = Mesh(Sphere(3), 32);
+    Mesh torusMesh = Mesh(Sphere(3), 8);
 
     // std::vector<Color> cols;
     // cols.resize(diskMesh.Vertexes());*
@@ -120,7 +120,7 @@ void MainWindow::TorusMeshExample()
 
 void MainWindow::CapsuleMeshExample()
 {
-    Mesh capsuleMesh = Mesh(Capsule(4, 2), 32);
+    Mesh capsuleMesh = Mesh(Capsule(4, 2), 7);
 
     // std::vector<Color> cols;
     // cols.resize(diskMesh.Vertexes());*

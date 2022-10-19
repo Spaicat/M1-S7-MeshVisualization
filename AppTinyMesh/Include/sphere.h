@@ -10,7 +10,6 @@ class Sphere
     public:
         explicit Sphere(double);
 
-        Vector Center() const;
         double Radius() const;
 };
 
