@@ -9,6 +9,7 @@
 #include "capsule.h"
 #include "ray.h"
 #include "mathematics.h"
+#include "matrix.h"
 
 // Triangle
 class Triangle
@@ -109,6 +110,7 @@ public:
 
   int Triangles() const;
   int Vertexes() const;
+  int Normals() const;
 
   std::vector<int> VertexIndexes() const;
   std::vector<int> NormalIndexes() const;
@@ -131,6 +133,12 @@ public:
   explicit Mesh(const Sphere&, int);
   explicit Mesh(const Torus&, int, int);
   explicit Mesh(const Capsule&, int);
+
+  void Rotate(const Matrix&);
+  void Transform(const Matrix&);
+  void Translate(const Vector& v);
+  void Merge(const Mesh&);
+  void SphereWarp(const Vector& center, double radius, const Vector& direction);
 
   void Load(const QString&);
   void SaveObj(const QString&, const QString&) const;
@@ -215,6 +223,15 @@ inline Vector Mesh::Vertex(int t, int v) const
 inline int Mesh::Vertexes() const
 {
   return int(vertices.size());
+}
+
+/*!
+\brief Get the number of normals in the geometry.
+\return The number of normals in the geometry, in other words the size of normals.
+*/
+inline int Mesh::Normals() const
+{
+  return int(normals.size());
 }
 
 /*!

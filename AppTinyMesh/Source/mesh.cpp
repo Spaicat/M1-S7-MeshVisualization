@@ -393,8 +393,8 @@ Mesh::Mesh(const Capsule& capsule, int n)
   }
 
   // Reserve space for the triangle array
-  varray.reserve((n * n*n) * 3);
-  narray.reserve((n * n*n) * 3);
+  varray.reserve((n * n) * 3);
+  narray.reserve((n * n) * 3);
 
   // Top and Bottom vertices and triangles
   int lastElement = n*(n-1) + 2;
@@ -426,7 +426,61 @@ Mesh::Mesh(const Capsule& capsule, int n)
       AddTriangle(secondI, thirdI, fourthI, firstI-1);
     }
   }
-  // ---------------------------------------------------------------
+}
+
+void Mesh::Transform(const Matrix& m)
+{
+  for (int i = 0; i < vertices.size(); i++)
+  {
+    vertices[i] = m * vertices[i];
+  }
+}
+
+void Mesh::Translate(const Vector& v)
+{
+  for (int i = 0; i < vertices.size(); i++)
+  {
+    vertices[i] += v;
+  }
+}
+
+void Mesh::Merge(const Mesh& m)
+{
+  int thisVertices = this->Vertexes();
+  int thisNormals = this->Normals();
+  for (int i = 0; i < m.Vertexes(); i++)
+  {
+    vertices.push_back(m.Vertex(i));
+  }
+  for (int i = 0; i < m.Normals(); i++)
+  {
+    normals.push_back(m.Normal(i));
+  }
+
+  int mTriangles = m.Triangles();
+  for (int i = 0; i < mTriangles; i++)
+  {
+    AddTriangle(
+      thisVertices + m.VertexIndex(i, 0),
+      thisVertices + m.VertexIndex(i, 1),
+      thisVertices + m.VertexIndex(i, 2),
+      thisNormals + m.NormalIndex(i, 0)
+    );
+  }
+}
+
+void Mesh::SphereWarp(const Vector& center, double radius, const Vector& direction)
+{
+  double rad = pow(radius, 2);
+  for (int i = 0; i < this->Vertexes(); i++)
+  {
+    Vector curr = this->Vertex(i);
+    double distance = pow((center[0]-curr[0]), 2) + pow((center[1]-curr[1]), 2) + pow((center[2]-curr[2]), 2);
+    if (distance < rad)
+    {
+        vertices[i] += (radius-sqrt(distance)) * direction;
+    }
+  }
 }
 
 /*!

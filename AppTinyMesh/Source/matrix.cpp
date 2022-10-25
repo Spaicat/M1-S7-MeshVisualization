@@ -493,7 +493,7 @@ Matrix Matrix::rotationZ(double angle)
   }});
 }
 
-Matrix Matrix::homothety(double x)
+Matrix Matrix::scale(double x)
 {
   return Matrix({{
     {x, 0, 0},

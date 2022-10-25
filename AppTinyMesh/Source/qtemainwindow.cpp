@@ -55,7 +55,7 @@ void MainWindow::editingSceneRight(const Ray&)
 
 void MainWindow::BoxMeshExample()
 {
-	Mesh boxMesh = Mesh(Box(1.0));
+    Mesh boxMesh = Mesh(Box(1.0));
 
 	std::vector<Color> cols;
 	cols.resize(boxMesh.Vertexes());
@@ -94,14 +94,13 @@ void MainWindow::CylinderMeshExample()
 
 void MainWindow::SphereMeshExample()
 {
-    Mesh torusMesh = Mesh(Sphere(3), 8);
-
+    Mesh sphereMesh = Mesh(Sphere(3), 64);
     // std::vector<Color> cols;
     // cols.resize(diskMesh.Vertexes());*
     // for (int i = 0; i < cols.size(); i++)
     // 	cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
 
-    meshColor = MeshColor(torusMesh);
+    meshColor = MeshColor(sphereMesh);
     UpdateGeometry();
 }
 

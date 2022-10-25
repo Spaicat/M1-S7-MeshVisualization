@@ -75,5 +75,5 @@ class Matrix
     static Matrix rotationY(double);
     static Matrix rotationZ(double);
 
-    static Matrix homothety(double);
+    static Matrix scale(double);
 };
