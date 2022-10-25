@@ -1,33 +1,37 @@
 #include "qte.h"
 #include "implicits.h"
 #include "ui_interface.h"
+#include <QFileDialog>
 
 MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
 {
-	// Chargement de l'interface
+    // Chargement de l'interface
     uiw->setupUi(this);
 
-	// Chargement du GLWidget
-	meshWidget = new MeshWidget;
-	QGridLayout* GLlayout = new QGridLayout;
-	GLlayout->addWidget(meshWidget, 0, 0);
-	GLlayout->setContentsMargins(0, 0, 0, 0);
+    // Chargement du GLWidget
+    meshWidget = new MeshWidget;
+    QGridLayout* GLlayout = new QGridLayout;
+    GLlayout->addWidget(meshWidget, 0, 0);
+    GLlayout->setContentsMargins(0, 0, 0, 0);
     uiw->widget_GL->setLayout(GLlayout);
 
-	// Creation des connect
-	CreateActions();
+    // Creation des connect
+    CreateActions();
 
-	meshWidget->SetCamera(Camera(Vector(10, 0, 0), Vector(0.0, 0.0, 0.0)));
+    // Initialisation vide de HeightField
+    hf = HeightField();
+
+    meshWidget->SetCamera(Camera(Vector(10, 0, 0), Vector(0.0, 0.0, 0.0)));
 }
 
 MainWindow::~MainWindow()
 {
-	delete meshWidget;
+    delete meshWidget;
 }
 
 void MainWindow::CreateActions()
 {
-	// Buttons
+    // Buttons
     connect(uiw->boxMesh, SIGNAL(clicked()), this, SLOT(BoxMeshExample()));
     connect(uiw->diskMesh, SIGNAL(clicked()), this, SLOT(DiskMeshExample()));
     connect(uiw->cylinderMesh, SIGNAL(clicked()), this, SLOT(CylinderMeshExample()));
@@ -39,10 +43,12 @@ void MainWindow::CreateActions()
     connect(uiw->wireframe, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_1, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_2, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
+    connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
+    connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
 
-	// Widget edition
-	connect(meshWidget, SIGNAL(_signalEditSceneLeft(const Ray&)), this, SLOT(editingSceneLeft(const Ray&)));
-	connect(meshWidget, SIGNAL(_signalEditSceneRight(const Ray&)), this, SLOT(editingSceneRight(const Ray&)));
+    // Widget edition
+    connect(meshWidget, SIGNAL(_signalEditSceneLeft(const Ray&)), this, SLOT(editingSceneLeft(const Ray&)));
+    connect(meshWidget, SIGNAL(_signalEditSceneRight(const Ray&)), this, SLOT(editingSceneRight(const Ray&)));
 }
 
 void MainWindow::editingSceneLeft(const Ray&)
@@ -57,13 +63,13 @@ void MainWindow::BoxMeshExample()
 {
     Mesh boxMesh = Mesh(Box(1.0));
 
-	std::vector<Color> cols;
-	cols.resize(boxMesh.Vertexes());
+    std::vector<Color> cols;
+    cols.resize(boxMesh.Vertexes());
     for (size_t i = 0; i < cols.size(); i++)
-		cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
+        cols[i] = Color(double(i) / 6.0, fmod(double(i) * 39.478378, 1.0), 0.0);
 
-	meshColor = MeshColor(boxMesh, cols, boxMesh.VertexIndexes());
-	UpdateGeometry();
+    meshColor = MeshColor(boxMesh, cols, boxMesh.VertexIndexes());
+    UpdateGeometry();
 }
 
 void MainWindow::DiskMeshExample()
@@ -148,13 +154,13 @@ void MainWindow::SphereImplicitExample()
 
 void MainWindow::UpdateGeometry()
 {
-	meshWidget->ClearAll();
-	meshWidget->AddMesh("BoxMesh", meshColor);
+    meshWidget->ClearAll();
+    meshWidget->AddMesh("BoxMesh", meshColor);
 
     uiw->lineEdit->setText(QString::number(meshColor.Vertexes()));
     uiw->lineEdit_2->setText(QString::number(meshColor.Triangles()));
 
-	UpdateMaterial();
+    UpdateMaterial();
 }
 
 void MainWindow::UpdateMaterial()
@@ -162,12 +168,37 @@ void MainWindow::UpdateMaterial()
     meshWidget->UseWireframeGlobal(uiw->wireframe->isChecked());
 
     if (uiw->radioShadingButton_1->isChecked())
-		meshWidget->SetMaterialGlobal(MeshMaterial::Normal);
-	else
-		meshWidget->SetMaterialGlobal(MeshMaterial::Color);
+        meshWidget->SetMaterialGlobal(MeshMaterial::Normal);
+    else
+        meshWidget->SetMaterialGlobal(MeshMaterial::Color);
 }
 
 void MainWindow::ResetCamera()
 {
-	meshWidget->SetCamera(Camera(Vector(-10.0), Vector(0.0)));
+    meshWidget->SetCamera(Camera(Vector(-10.0), Vector(0.0)));
+}
+
+void MainWindow::LoadFile()
+{
+  QString filename = QFileDialog::getOpenFileName(
+    this,
+    "Open height field",
+    QDir::currentPath(),
+    "PNG (*.png);;BMP (*.bmp);;CUR (*.cur);;GIF (*.gif);;ICNS (*.icns);;ICO (*.ico);;JPEG (*.jpeg);;JPG (*.jpg);;PBM (*.pbm);;PGM (*.pgm);;PPM (*.ppm);;SVG (*.svg);;SVGZ (*.svgz);;TGA (*.tga);;TIF (*.tif);;TIFF (*.tiff);;WBMP (*.wbmp);;WEBP (*.webp);;XBM (*.xbm);;XPM (*.xpm)"
+  );
+
+  // Set label to the file path and name
+  uiw->fileInput->setText(filename);
+
+  QImage image = QImage(filename);
+  qDebug() << image.height() << " | " << image.width();
+
+  this->hf = HeightField(image);
+}
+
+void MainWindow::GenerateHeightField()
+{
+  Mesh planeMesh = this->hf.generateMesh(4, 0.05);
+  meshColor = MeshColor(planeMesh);
+  UpdateGeometry();
 }

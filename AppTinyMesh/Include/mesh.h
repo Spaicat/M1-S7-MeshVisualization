@@ -134,7 +134,6 @@ public:
   explicit Mesh(const Torus&, int, int);
   explicit Mesh(const Capsule&, int);
 
-  void Rotate(const Matrix&);
   void Transform(const Matrix&);
   void Translate(const Vector& v);
   void Merge(const Mesh&);

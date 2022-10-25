@@ -4,6 +4,7 @@
 #include <QtWidgets/qmainwindow.h>
 #include "realtime.h"
 #include "meshcolor.h"
+#include "heightfield.h"
 
 QT_BEGIN_NAMESPACE
 	namespace Ui { class Assets; }
@@ -17,6 +18,7 @@ private:
 
   MeshWidget* meshWidget;   //!< Viewer
   MeshColor meshColor;		//!< Mesh.
+  HeightField hf;
 
 public:
   MainWindow();
@@ -33,9 +35,11 @@ public slots:
   void SphereMeshExample();
   void TorusMeshExample();
   void CapsuleMeshExample();
+  void GenerateHeightField();
   void SphereImplicitExample();
   void ResetCamera();
   void UpdateMaterial();
+  void LoadFile();
 };
 
 #endif

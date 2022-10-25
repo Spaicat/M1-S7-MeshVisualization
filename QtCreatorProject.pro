@@ -15,6 +15,7 @@ SOURCES += \
     AppTinyMesh/Source/capsule.cpp \
     AppTinyMesh/Source/disk.cpp \
     AppTinyMesh/Source/cylinder.cpp \
+    AppTinyMesh/Source/heightfield.cpp \
     AppTinyMesh/Source/matrix.cpp \
     AppTinyMesh/Source/sphere.cpp \
     AppTinyMesh/Source/torus.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     AppTinyMesh/Include/capsule.h \
     AppTinyMesh/Include/disk.h \
     AppTinyMesh/Include/cylinder.h \
+    AppTinyMesh/Include/heightfield.h \
     AppTinyMesh/Include/matrix.h \
     AppTinyMesh/Include/sphere.h \
     AppTinyMesh/Include/torus.h \
