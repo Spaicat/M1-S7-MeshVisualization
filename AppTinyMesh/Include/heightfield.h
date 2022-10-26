@@ -3,6 +3,8 @@
 #include <QImage>
 #include "mesh.h"
 
+#include "mathematics.h"
+
 class HeightField
 {
     protected:
@@ -10,7 +12,9 @@ class HeightField
         int width;
         int length;
 
+        // Function that are not accesible from HeightField
         void AddTriangle(int, int, int, int, std::vector<int>&, std::vector<int>&);
+        Vector SubstractVector(const Vector& u, const Vector& v);
     public:
         explicit HeightField();
         explicit HeightField(QImage image);

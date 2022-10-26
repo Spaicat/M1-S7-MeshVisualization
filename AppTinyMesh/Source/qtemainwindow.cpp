@@ -20,6 +20,12 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
 
     // Initialisation vide de HeightField
     hf = HeightField();
+    maxHeight = 50;
+    uiw->heightMax->setText(QString::number(maxHeight));
+    uiw->heightMaxSlider->setValue(maxHeight);
+    heightPlaneSize = 5;
+    uiw->heightSize->setText(QString::number(heightPlaneSize));
+    uiw->heightSizeSlider->setValue(heightPlaneSize);
 
     meshWidget->SetCamera(Camera(Vector(10, 0, 0), Vector(0.0, 0.0, 0.0)));
 }
@@ -45,6 +51,10 @@ void MainWindow::CreateActions()
     connect(uiw->radioShadingButton_2, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
+    connect(uiw->heightSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetHeightPlaneSize(int)));
+    connect(uiw->heightSize, SIGNAL(textChanged(QString)), this, SLOT(SetHeightPlaneSize(QString)));
+    connect(uiw->heightMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
+    connect(uiw->heightMax, SIGNAL(textChanged(QString)), this, SLOT(SetMaxHeight(QString)));
 
     // Widget edition
     connect(meshWidget, SIGNAL(_signalEditSceneLeft(const Ray&)), this, SLOT(editingSceneLeft(const Ray&)));
@@ -184,7 +194,7 @@ void MainWindow::LoadFile()
     this,
     "Open height field",
     QDir::currentPath(),
-    "PNG (*.png);;BMP (*.bmp);;CUR (*.cur);;GIF (*.gif);;ICNS (*.icns);;ICO (*.ico);;JPEG (*.jpeg);;JPG (*.jpg);;PBM (*.pbm);;PGM (*.pgm);;PPM (*.ppm);;SVG (*.svg);;SVGZ (*.svgz);;TGA (*.tga);;TIF (*.tif);;TIFF (*.tiff);;WBMP (*.wbmp);;WEBP (*.webp);;XBM (*.xbm);;XPM (*.xpm)"
+    "All files (*.*);;PNG (*.png);;GIF (*.gif);;ICO (*.ico);;JPEG (*.jpeg);;JPG (*.jpg);;SVG (*.svg);;WBMP (*.wbmp);;WEBP (*.webp)"
   );
 
   // Set label to the file path and name
@@ -198,7 +208,31 @@ void MainWindow::LoadFile()
 
 void MainWindow::GenerateHeightField()
 {
-  Mesh planeMesh = this->hf.generateMesh(4, 0.05);
+  Mesh planeMesh = this->hf.generateMesh((double)this->maxHeight/50, (double)this->heightPlaneSize/500);
   meshColor = MeshColor(planeMesh);
   UpdateGeometry();
+}
+
+void MainWindow::SetHeightPlaneSize(int size)
+{
+  this->heightPlaneSize = size;
+  uiw->heightSize->setText(QString::number(heightPlaneSize));
+}
+
+void MainWindow::SetHeightPlaneSize(QString size)
+{
+  this->heightPlaneSize = size.toInt();
+  uiw->heightSizeSlider->setValue(heightPlaneSize);
+}
+
+void MainWindow::SetMaxHeight(int max)
+{
+  this->maxHeight = max;
+  uiw->heightMax->setText(QString::number(maxHeight));
+}
+
+void MainWindow::SetMaxHeight(QString max)
+{
+  this->maxHeight = max.toInt();
+  uiw->heightMaxSlider->setValue(maxHeight);
 }

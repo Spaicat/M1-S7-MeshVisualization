@@ -21,6 +21,8 @@ void HeightField::AddTriangle(int a, int b, int c, int n, std::vector<int>& va, 
 */
 HeightField::HeightField()
 {
+  this->width = 0;
+  this->length = 0;
 }
 
 /*!
@@ -46,21 +48,31 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
   std::vector<Vector> normals;
   std::vector<int> va;
   std::vector<int> na;
+  int normalCount = -1;
   for (int i = 0; i < this->width; i++)
   {
     for (int j = 0; j < this->length; j++)
     {
       vertices.push_back(Vector(i*squareSize, j*squareSize, height[i][j]*heightMax));
-      normals.push_back(Vector(i*squareSize, j*squareSize, 1));
 
-      if (i < this->width-1 && j < this->length-1)
+      if (i > 0 && j > 0)
       {
-        int firstI = j + this->length * i;
-        int secondI = j + this->length * i + 1;
-        int thirdI = j + this->length * (i+1);
-        int fourthI = j + this->length * (i+1) + 1;
-        AddTriangle(firstI, fourthI, secondI, firstI, va, na);
-        AddTriangle(firstI, fourthI, thirdI, firstI, va, na);
+        // Index
+          int firstI = j + this->length * (i-1) - 1;
+          int secondI = j + this->length * (i-1);
+          int thirdI = j + this->length * i - 1;
+          int fourthI = j + this->length * i;
+
+        // Normal
+        Vector v1 = vertices[secondI] - vertices[fourthI];
+        Vector v2 = vertices[thirdI] - vertices[fourthI];
+        Vector triangleNormal = v1 / v2;
+        normals.push_back(triangleNormal);
+        normalCount++;
+
+        // Triangle
+        AddTriangle(firstI, fourthI, secondI, normalCount, va, na);
+        AddTriangle(firstI, fourthI, thirdI, normalCount, va, na);
       }
     }
   }

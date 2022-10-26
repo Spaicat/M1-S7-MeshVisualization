@@ -271,7 +271,7 @@ p, li { white-space: pre-wrap; }
          <x>10</x>
          <y>270</y>
          <width>331</width>
-         <height>171</height>
+         <height>251</height>
         </rect>
        </property>
        <property name="title">
@@ -310,13 +310,97 @@ p, li { white-space: pre-wrap; }
         <property name="geometry">
          <rect>
           <x>90</x>
-          <y>130</y>
+          <y>210</y>
           <width>151</width>
           <height>31</height>
          </rect>
         </property>
         <property name="text">
          <string>Generate</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="heightSize">
+        <property name="geometry">
+         <rect>
+          <x>232</x>
+          <y>110</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>131</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Size (of one square)</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>140</y>
+          <width>131</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Max height</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="heightMax">
+        <property name="geometry">
+         <rect>
+          <x>230</x>
+          <y>170</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QSlider" name="heightSizeSlider">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>115</y>
+          <width>211</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QSlider" name="heightMaxSlider">
+        <property name="geometry">
+         <rect>
+          <x>9</x>
+          <y>175</y>
+          <width>211</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </widget>

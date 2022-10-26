@@ -18,7 +18,10 @@ private:
 
   MeshWidget* meshWidget;   //!< Viewer
   MeshColor meshColor;		//!< Mesh.
+
   HeightField hf;
+  int heightPlaneSize;
+  int maxHeight;
 
 public:
   MainWindow();
@@ -40,6 +43,10 @@ public slots:
   void ResetCamera();
   void UpdateMaterial();
   void LoadFile();
+  void SetHeightPlaneSize(int);
+  void SetHeightPlaneSize(QString);
+  void SetMaxHeight(int);
+  void SetMaxHeight(QString);
 };
 
 #endif
