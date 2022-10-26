@@ -1,4 +1,6 @@
 #include "mesh.h"
+#include <QDebug>
+#include <string>
 
 /*!
 \class Mesh mesh.h
@@ -251,7 +253,6 @@ Mesh::Mesh(const Cylinder& cylinder, int n)
     double z = cylinder.Height() / 2;
     vertices[i] = Vector(x, y, z); // Top
     vertices[i+1] = Vector(x, y, -z); // Bottom
-    normals.push_back(Vector(x, y, 0));
   }
 
   // Reserve space for the triangle array
@@ -264,6 +265,14 @@ Mesh::Mesh(const Cylinder& cylinder, int n)
     int secondI = i+1;
     int thirdI = i % (n*2) + 2;
     int fourthI = i % (n*2) + 3;
+
+    // Normal - Cross product
+    Vector v1 = vertices[secondI] - vertices[firstI];
+    Vector v2 = vertices[thirdI] - vertices[firstI];
+    Vector triangleNormal = v1 / v2;
+    normals.push_back(triangleNormal);
+
+    // Triangles
     AddTriangle(0, firstI, thirdI, 0); // Top disk triangle
     AddTriangle(1, secondI, fourthI, 1); // Bottom disk triangle
     AddTriangle(firstI, secondI, fourthI, 1 + i/2); // First triangle of cylinder
@@ -286,7 +295,6 @@ Mesh::Mesh(const Sphere& sphere, int n)
       double y = std::sin(phi) * std::sin(theta) * sphere.Radius();
       double z = std::cos(phi) * sphere.Radius();
       vertices[j + n * i + 1] = Vector(x, y, z);
-      normals.push_back(Vector(x, y, z));
     }
   }
 
@@ -297,16 +305,18 @@ Mesh::Mesh(const Sphere& sphere, int n)
   // Top and Bottom vertices and triangles
   int lastElement = n*(n-1) + 2;
   vertices[0] = Vector(0, 0, sphere.Radius());
+  normals.push_back(Vector(0, 0, 1));
   vertices[lastElement] = Vector(0, 0, -sphere.Radius());
+  normals.push_back(Vector(0, 0, -1));
 
   for (int i = 0; i < n; i++)
   {
     int firstI = i+1;
     int secondI = (i+1) % n + 1;
-    AddTriangle(0, firstI, secondI, i);
+    AddTriangle(0, firstI, secondI, 1);
     firstI += n*(n-2);
     secondI += n*(n-2);
-    AddTriangle(lastElement, firstI, secondI, i + n*(n-2));
+    AddTriangle(lastElement, firstI, secondI, 0);
   }
 
   // All the remaining sphere
@@ -320,8 +330,16 @@ Mesh::Mesh(const Sphere& sphere, int n)
       int secondI = i * n + j_next + 1;
       int thirdI = i_next * n + j + 1;
       int fourthI = i_next * n + j_next + 1;
-      AddTriangle(firstI, secondI, thirdI, firstI-1);
-      AddTriangle(secondI, thirdI, fourthI, firstI-1);
+
+      // Normal - Cross product
+      Vector v1 = vertices[secondI] - vertices[firstI];
+      Vector v2 = vertices[thirdI] - vertices[firstI];
+      Vector triangleNormal = v1 / v2;
+      normals.push_back(triangleNormal);
+
+      // Triangles
+      AddTriangle(firstI, secondI, thirdI, firstI+1);
+      AddTriangle(secondI, thirdI, fourthI, firstI+1);
     }
   }
 }
@@ -359,6 +377,14 @@ Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
       int secondI = i * n_poloidal + j_next;
       int thirdI = i_next * n_poloidal + j;
       int fourthI = i_next * n_poloidal + j_next;
+
+      // Normal - Cross product
+      Vector v1 = vertices[secondI] - vertices[firstI];
+      Vector v2 = vertices[thirdI] - vertices[firstI];
+      Vector triangleNormal = v1 / v2;
+      normals.push_back(triangleNormal);
+
+      // Trianles
       AddTriangle(firstI, secondI, thirdI, firstI);
       AddTriangle(secondI, thirdI, fourthI, firstI);
     }
@@ -382,12 +408,10 @@ Mesh::Mesh(const Capsule& capsule, int n)
       if (i < n / 2)
       {
         vertices[j + n * i + 1] = Vector(x, y, z + capsule.Height() / 2);
-        normals.push_back(Vector(x, y, z + capsule.Height() / 2));
       }
       else
       {
         vertices[j + n * i + 1] = Vector(x, y, z - capsule.Height() / 2);
-        normals.push_back(Vector(x, y, z - capsule.Height() / 2));
       }
     }
   }
@@ -399,16 +423,18 @@ Mesh::Mesh(const Capsule& capsule, int n)
   // Top and Bottom vertices and triangles
   int lastElement = n*(n-1) + 2;
   vertices[0] = Vector(0, 0, (capsule.Height() / 2) + capsule.Radius());
+  normals.push_back(Vector(0, 0, 1));
   vertices[lastElement] = Vector(0, 0, - (capsule.Height() / 2) - capsule.Radius());
+  normals.push_back(Vector(0, 0, -1));
 
   for (int i = 0; i < n; i++)
   {
     int firstI = i+1;
     int secondI = (i+1) % n + 1;
-    AddTriangle(0, firstI, secondI, i);
+    AddTriangle(0, firstI, secondI, 1);
     firstI += n*(n-2);
     secondI += n*(n-2);
-    AddTriangle(lastElement, firstI, secondI, i + n*(n-2));
+    AddTriangle(lastElement, firstI, secondI, 0);
   }
 
   // All the remaining sphere
@@ -422,8 +448,16 @@ Mesh::Mesh(const Capsule& capsule, int n)
       int secondI = i * n + j_next + 1;
       int thirdI = i_next * n + j + 1;
       int fourthI = i_next * n + j_next + 1;
-      AddTriangle(firstI, secondI, thirdI, firstI-1);
-      AddTriangle(secondI, thirdI, fourthI, firstI-1);
+
+      // Normal - Cross product
+      Vector v1 = vertices[secondI] - vertices[firstI];
+      Vector v2 = vertices[thirdI] - vertices[firstI];
+      Vector triangleNormal = v1 / v2;
+      normals.push_back(triangleNormal);
+
+      // Triangles
+      AddTriangle(firstI, secondI, thirdI, firstI+1);
+      AddTriangle(secondI, thirdI, fourthI, firstI+1);
     }
   }
 }
