@@ -26,6 +26,7 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
     heightPlaneSize = 5;
     uiw->heightSize->setText(QString::number(heightPlaneSize));
     uiw->heightSizeSlider->setValue(heightPlaneSize);
+    isColorsChecked = false;
 
     meshWidget->SetCamera(Camera(Vector(10, 0, 0), Vector(0.0, 0.0, 0.0)));
 }
@@ -49,8 +50,11 @@ void MainWindow::CreateActions()
     connect(uiw->wireframe, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_1, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_2, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
+
+    // HeightField buttons
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
+    connect(uiw->withColors, SIGNAL(clicked(bool)), this, SLOT(SetColorsChecked(bool)));
     connect(uiw->heightSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetHeightPlaneSize(int)));
     connect(uiw->heightSize, SIGNAL(textChanged(QString)), this, SLOT(SetHeightPlaneSize(QString)));
     connect(uiw->heightMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
@@ -201,16 +205,27 @@ void MainWindow::LoadFile()
   uiw->fileInput->setText(filename);
 
   QImage image = QImage(filename);
-  qDebug() << image.height() << " | " << image.width();
 
   this->hf = HeightField(image);
 }
 
 void MainWindow::GenerateHeightField()
 {
-  Mesh planeMesh = this->hf.generateMesh((double)this->maxHeight/50, (double)this->heightPlaneSize/500);
-  meshColor = MeshColor(planeMesh);
+  if (this->isColorsChecked)
+  {
+    meshColor = this->hf.generateMeshColor((double)this->maxHeight/50, (double)this->heightPlaneSize/500);
+  }
+  else
+  {
+    Mesh heightField = this->hf.generateMesh((double)this->maxHeight/50, (double)this->heightPlaneSize/500);
+    meshColor = MeshColor(heightField);
+  }
   UpdateGeometry();
+}
+
+void MainWindow::SetColorsChecked(bool isChecked)
+{
+  this->isColorsChecked = isChecked;
 }
 
 void MainWindow::SetHeightPlaneSize(int size)

@@ -80,3 +80,41 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
   Mesh plane = Mesh(vertices, normals, va, na);
   return plane;
 }
+
+MeshColor HeightField::generateMeshColor(double heightMax, double squareSize)
+{
+  Color gradColor1 = Color();
+  Mesh plane = this->generateMesh(heightMax, squareSize);
+  std::vector<Color> cols;
+  cols.resize(plane.Vertexes());
+  std::vector<int> na = plane.NormalIndexes();
+  for (int i = 0; i < this->width; i++)
+  {
+    for (int j = 0; j < this->length; j++)
+    {
+      int iterator = i * this->length + j;
+      if (this->height[i][j] == 0)
+      {
+        cols[iterator] = Color(24, 161, 237);
+      }
+      else if (this->height[i][j] < 0.05)
+      {
+        cols[iterator] = Color(221, 210, 126);
+      }
+      else if (this->height[i][j] < 0.50)
+      {
+        cols[iterator] = Color(31, 187, 25);
+      }
+      else if (this->height[i][j] < 0.75)
+      {
+        cols[iterator] = Color(102, 61, 15);
+      }
+      else
+      {
+        cols[iterator] = Color(255, 255, 255);
+      }
+    }
+  }
+
+  return MeshColor(plane, cols, plane.VertexIndexes());
+}

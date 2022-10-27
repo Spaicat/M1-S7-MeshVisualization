@@ -22,6 +22,7 @@ private:
   HeightField hf;
   int heightPlaneSize;
   int maxHeight;
+  bool isColorsChecked;
 
 public:
   MainWindow();
@@ -39,6 +40,7 @@ public slots:
   void TorusMeshExample();
   void CapsuleMeshExample();
   void GenerateHeightField();
+  void SetColorsChecked(bool);
   void SphereImplicitExample();
   void ResetCamera();
   void UpdateMaterial();

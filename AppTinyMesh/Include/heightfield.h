@@ -2,6 +2,8 @@
 #include <iostream>
 #include <QImage>
 #include "mesh.h"
+#include "meshcolor.h"
+#include "color.h"
 
 #include "mathematics.h"
 
@@ -21,5 +23,6 @@ class HeightField
         //explicit HeightField(/* Noise */, double size);
 
         Mesh generateMesh(double, double);
+        MeshColor generateMeshColor(double, double);
         //static HeightField randomNoise();
 };

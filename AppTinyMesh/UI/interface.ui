@@ -309,7 +309,7 @@ p, li { white-space: pre-wrap; }
        <widget class="QPushButton" name="generateBtn">
         <property name="geometry">
          <rect>
-          <x>90</x>
+          <x>170</x>
           <y>210</y>
           <width>151</width>
           <height>31</height>
@@ -401,6 +401,19 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="withColors">
+        <property name="geometry">
+         <rect>
+          <x>7</x>
+          <y>211</y>
+          <width>111</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Colors</string>
         </property>
        </widget>
       </widget>
