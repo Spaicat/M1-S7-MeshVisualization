@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <QImage>
+#include <algorithm>
 #include "mesh.h"
 #include "meshcolor.h"
 #include "color.h"
@@ -21,7 +22,10 @@ class HeightField
     public:
         explicit HeightField();
         explicit HeightField(QImage image);
-        //explicit HeightField(/* Noise */, double size);
+
+        std::vector<double> operator[](int n) const;
+        int getWidth();
+        int getLength();
 
         Mesh generateMesh(double, double);
         MeshColor generateMeshColor(double, double);

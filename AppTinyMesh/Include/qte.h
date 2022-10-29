@@ -20,9 +20,11 @@ private:
   MeshColor meshColor;		//!< Mesh.
 
   HeightField hf;
-  int heightPlaneSize;
+  int widthSize;
   int maxHeight;
   bool isColorsChecked;
+  int flattenX;
+  int flattenY;
 
 public:
   MainWindow();
@@ -45,10 +47,15 @@ public slots:
   void ResetCamera();
   void UpdateMaterial();
   void LoadFile();
-  void SetHeightPlaneSize(int);
-  void SetHeightPlaneSize(QString);
+  void SetWidthSize(int);
+  void SetWidthSize(QString);
   void SetMaxHeight(int);
   void SetMaxHeight(QString);
+  void SetFlattenX(int);
+  void SetFlattenX(QString);
+  void SetFlattenY(int);
+  void SetFlattenY(QString);
+  void Flatten();
 };
 
 #endif

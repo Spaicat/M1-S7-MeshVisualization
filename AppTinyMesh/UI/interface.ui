@@ -265,7 +265,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </widget>
-      <widget class="QGroupBox" name="heightField_groupBox">
+      <widget class="QGroupBox" name="HeightField_groupBox">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -275,7 +275,7 @@ p, li { white-space: pre-wrap; }
         </rect>
        </property>
        <property name="title">
-        <string>HeightField</string>
+        <string>Height field - Generation</string>
        </property>
        <widget class="QLineEdit" name="fileInput">
         <property name="enabled">
@@ -319,11 +319,11 @@ p, li { white-space: pre-wrap; }
          <string>Generate</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="heightSize">
+       <widget class="QLineEdit" name="widthSize">
         <property name="geometry">
          <rect>
-          <x>232</x>
-          <y>110</y>
+          <x>10</x>
+          <y>100</y>
           <width>91</width>
           <height>31</height>
          </rect>
@@ -358,20 +358,20 @@ p, li { white-space: pre-wrap; }
        <widget class="QLineEdit" name="heightMax">
         <property name="geometry">
          <rect>
-          <x>230</x>
+          <x>10</x>
           <y>170</y>
           <width>91</width>
           <height>31</height>
          </rect>
         </property>
        </widget>
-       <widget class="QSlider" name="heightSizeSlider">
+       <widget class="QSlider" name="widthSizeSlider">
         <property name="geometry">
          <rect>
-          <x>10</x>
-          <y>115</y>
+          <x>110</x>
+          <y>100</y>
           <width>211</width>
-          <height>21</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="minimum">
@@ -387,10 +387,10 @@ p, li { white-space: pre-wrap; }
        <widget class="QSlider" name="heightMaxSlider">
         <property name="geometry">
          <rect>
-          <x>9</x>
-          <y>175</y>
+          <x>110</x>
+          <y>170</y>
           <width>211</width>
-          <height>21</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="minimum">
@@ -406,14 +406,112 @@ p, li { white-space: pre-wrap; }
        <widget class="QCheckBox" name="withColors">
         <property name="geometry">
          <rect>
-          <x>7</x>
+          <x>10</x>
           <y>211</y>
           <width>111</width>
-          <height>21</height>
+          <height>31</height>
          </rect>
         </property>
         <property name="text">
          <string>Colors</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QGroupBox" name="Flatten_groupBox">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>530</y>
+         <width>331</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Height field - Flatten</string>
+       </property>
+       <widget class="QSlider" name="flattenXSlider">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>30</y>
+          <width>191</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QSlider" name="flattenYSlider">
+        <property name="geometry">
+         <rect>
+          <x>130</x>
+          <y>70</y>
+          <width>191</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="flattenBtn">
+        <property name="geometry">
+         <rect>
+          <x>169</x>
+          <y>110</y>
+          <width>151</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Flatten</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="flattenX">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>30</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="flattenY">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>70</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>21</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>X</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>21</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Y</string>
         </property>
        </widget>
       </widget>

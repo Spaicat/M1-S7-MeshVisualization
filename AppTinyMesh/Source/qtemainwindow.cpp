@@ -23,10 +23,13 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
     maxHeight = 50;
     uiw->heightMax->setText(QString::number(maxHeight));
     uiw->heightMaxSlider->setValue(maxHeight);
-    heightPlaneSize = 5;
-    uiw->heightSize->setText(QString::number(heightPlaneSize));
-    uiw->heightSizeSlider->setValue(heightPlaneSize);
+    widthSize = 5;
+    uiw->widthSize->setText(QString::number(widthSize));
+    uiw->widthSizeSlider->setValue(widthSize);
     isColorsChecked = false;
+
+    flattenX = 0;
+    flattenY = 0;
 
     meshWidget->SetCamera(Camera(Vector(10, 0, 0), Vector(0.0, 0.0, 0.0)));
 }
@@ -55,10 +58,15 @@ void MainWindow::CreateActions()
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
     connect(uiw->withColors, SIGNAL(clicked(bool)), this, SLOT(SetColorsChecked(bool)));
-    connect(uiw->heightSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetHeightPlaneSize(int)));
-    connect(uiw->heightSize, SIGNAL(textChanged(QString)), this, SLOT(SetHeightPlaneSize(QString)));
+    connect(uiw->widthSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetWidthSize(int)));
+    connect(uiw->widthSize, SIGNAL(textChanged(QString)), this, SLOT(SetWidthSize(QString)));
     connect(uiw->heightMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
     connect(uiw->heightMax, SIGNAL(textChanged(QString)), this, SLOT(SetMaxHeight(QString)));
+    connect(uiw->flattenXSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenX(int)));
+    connect(uiw->flattenX, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenX(QString)));
+    connect(uiw->flattenYSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenY(int)));
+    connect(uiw->flattenY, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenY(QString)));
+    connect(uiw->flattenBtn, SIGNAL(clicked()), this, SLOT(Flatten()));
 
     // Widget edition
     connect(meshWidget, SIGNAL(_signalEditSceneLeft(const Ray&)), this, SLOT(editingSceneLeft(const Ray&)));
@@ -213,13 +221,16 @@ void MainWindow::GenerateHeightField()
 {
   if (this->isColorsChecked)
   {
-    meshColor = this->hf.generateMeshColor((double)this->maxHeight/50, (double)this->heightPlaneSize/500);
+    meshColor = this->hf.generateMeshColor((double)this->maxHeight/50, (double)this->widthSize/500);
   }
   else
   {
-    Mesh heightField = this->hf.generateMesh((double)this->maxHeight/50, (double)this->heightPlaneSize/500);
+    Mesh heightField = this->hf.generateMesh((double)this->maxHeight/50, (double)this->widthSize/500);
     meshColor = MeshColor(heightField);
   }
+
+  uiw->flattenXSlider->setMaximum(this->hf.getWidth());
+  uiw->flattenYSlider->setMaximum(this->hf.getLength());
   UpdateGeometry();
 }
 
@@ -228,16 +239,16 @@ void MainWindow::SetColorsChecked(bool isChecked)
   this->isColorsChecked = isChecked;
 }
 
-void MainWindow::SetHeightPlaneSize(int size)
+void MainWindow::SetWidthSize(int size)
 {
-  this->heightPlaneSize = size;
-  uiw->heightSize->setText(QString::number(heightPlaneSize));
+  this->widthSize = size;
+  uiw->widthSize->setText(QString::number(widthSize));
 }
 
-void MainWindow::SetHeightPlaneSize(QString size)
+void MainWindow::SetWidthSize(QString size)
 {
-  this->heightPlaneSize = size.toInt();
-  uiw->heightSizeSlider->setValue(heightPlaneSize);
+  this->widthSize = size.toInt();
+  uiw->widthSizeSlider->setValue(widthSize);
 }
 
 void MainWindow::SetMaxHeight(int max)
@@ -250,4 +261,35 @@ void MainWindow::SetMaxHeight(QString max)
 {
   this->maxHeight = max.toInt();
   uiw->heightMaxSlider->setValue(maxHeight);
+}
+
+void MainWindow::SetFlattenX(int x)
+{
+  this->flattenX = x;
+  uiw->flattenX->setText(QString::number(flattenX));
+}
+
+void MainWindow::SetFlattenX(QString x)
+{
+  this->flattenX = x.toInt();
+  uiw->flattenXSlider->setValue(flattenX);
+}
+
+void MainWindow::SetFlattenY(int y)
+{
+  this->flattenY = y;
+  uiw->flattenY->setText(QString::number(flattenY));
+}
+
+void MainWindow::SetFlattenY(QString y)
+{
+  this->flattenY = y.toInt();
+  uiw->flattenYSlider->setValue(flattenY);
+}
+
+void MainWindow::Flatten()
+{
+  this->hf.flatten(this->flattenX, this->flattenY, 100, this->hf[flattenX][flattenY], 1);
+  GenerateHeightField();
+  UpdateGeometry();
 }

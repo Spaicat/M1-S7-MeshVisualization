@@ -50,6 +50,21 @@ HeightField::HeightField(QImage image)
   }
 }
 
+std::vector<double> HeightField::operator[](int n) const
+{
+  return this->height[n];
+}
+
+int HeightField::getWidth()
+{
+  return this->width;
+}
+
+int HeightField::getLength()
+{
+  return this->width;
+}
+
 Mesh HeightField::generateMesh(double heightMax, double squareSize)
 {
   std::vector<Vector> vertices;
@@ -59,7 +74,6 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
   int normalCount = -1;
   double offsetX = (this->width*squareSize) / 2;
   double offsetY = (this->length*squareSize) / 2;
-  this->flatten(this->width/2, this->length/2, 100, 0.5, 0.3);
   for (int i = 0; i < this->width; i++)
   {
     for (int j = 0; j < this->length; j++)
@@ -150,28 +164,18 @@ double HeightField::smoothMin(double a, double b, double k)
   return a * h + b * (1 - h) - k * h * (1 - h);
 }
 
-void HeightField::flatten(int x, int y, double radius, double min, double smoothness)
+void HeightField::flatten(int x, int y, double radius, double floor, double strength)
 {
   double rad = pow(radius, 2);
   for (int i = 0; i < this->width; i++)
   {
     for (int j = 0; j < this->length; j++)
     {
-      double distance = pow((x-i), 2) + pow((y-j), 2);
+      double distance = pow((i-x), 2) + pow((j-y), 2);
       if (distance < rad)
       {
-        if (this->height[i][j] > min)
-        {
-          double res = smoothMax(this->height[i][j]/rad * distance, min, smoothness);
-          if (res < this->height[i][j])
-            this->height[i][j] = res;
-        }
-        else
-        {
-          double res = smoothMin(this->height[i][j]/distance * rad, min, smoothness);
-          if (res > this->height[i][j])
-            this->height[i][j] = res;
-        }
+        double strengthCalc = (1 - (distance / rad)) * (1 - (distance / rad)) * strength;
+        height[i][j] = strengthCalc * floor + (1 - strengthCalc) * height[i][j];
       }
     }
   }
