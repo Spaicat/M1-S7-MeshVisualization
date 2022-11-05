@@ -17,18 +17,18 @@ class HeightField
 
         void AddTriangle(int, int, int, int, std::vector<int>&, std::vector<int>&);
         Color getColorBetweenGradient(Color, Color, double);
-        double smoothMin(double, double, double);
-        double smoothMax(double, double, double);
     public:
         explicit HeightField();
         explicit HeightField(QImage image);
+        explicit HeightField(int width, int length);
 
         std::vector<double> operator[](int n) const;
+        std::vector<double>& operator[](int n);
         int getWidth();
         int getLength();
 
         Mesh generateMesh(double, double);
-        MeshColor generateMeshColor(double, double);
+        MeshColor generateMeshColor(Mesh&, double);
         void flatten(int x, int y, double radius, double, double);
-        //static HeightField randomNoise();
+        static HeightField randomNoise();
 };

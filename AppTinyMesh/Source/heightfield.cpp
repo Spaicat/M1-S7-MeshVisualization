@@ -25,12 +25,26 @@ Color HeightField::getColorBetweenGradient(Color color1, Color color2, double pe
 }
 
 /*!
-\brief Constructor which take the "value" of each pixel of an image to determine the height.
+\brief Constructor empty.
 */
 HeightField::HeightField()
 {
   this->width = 0;
   this->length = 0;
+}
+
+/*!
+\brief Constructor empty, but define width and length.
+*/
+HeightField::HeightField(int width, int length)
+{
+  this->width = width;
+  this->length = length;
+  height.resize(width);
+  for (int i = 0; i < width; i++)
+  {
+    height[i].resize(length);
+  }
 }
 
 /*!
@@ -41,9 +55,11 @@ HeightField::HeightField(QImage image)
   this->width = image.width();
   this->length = image.height();
   height.resize(image.width());
-  for(int i = 0; i < image.width(); i++){
+  for(int i = 0; i < image.width(); i++)
+  {
     height[i].resize(image.height());
-    for(int j = 0; j < image.height(); j++){
+    for(int j = 0; j < image.height(); j++)
+    {
       QColor color = image.pixelColor(i,j);
       height[i][j] = (double)color.value() / 255; // Max=255 for the value
     }
@@ -51,6 +67,11 @@ HeightField::HeightField(QImage image)
 }
 
 std::vector<double> HeightField::operator[](int n) const
+{
+  return this->height[n];
+}
+
+std::vector<double>& HeightField::operator[](int n)
 {
   return this->height[n];
 }
@@ -101,10 +122,6 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
 
         normalCount += 2;
 
-        /*double slopeAngle1 = (vertices[secondI][2] - vertices[fourthI][2]) / (vertices[secondI][0] - vertices[fourthI][0]);
-        double slopeAngle2 = (vertices[secondI][2] - vertices[fourthI][2]) / (vertices[secondI][1] - vertices[fourthI][1]);
-        qDebug().noquote() << slopeAngle1 << "-" << slopeAngle2;*/
-
         // Triangle
         AddTriangle(firstI, fourthI, secondI, normalCount-1, va, na);
         AddTriangle(firstI, fourthI, thirdI, normalCount, va, na);
@@ -116,10 +133,9 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
   return plane;
 }
 
-MeshColor HeightField::generateMeshColor(double heightMax, double squareSize)
+MeshColor HeightField::generateMeshColor(Mesh& plane, double mult)
 {
   Color gradColor1 = Color();
-  Mesh plane = this->generateMesh(heightMax, squareSize);
   std::vector<Color> cols;
   cols.resize(plane.Vertexes());
   std::vector<int> na = plane.NormalIndexes();
@@ -129,39 +145,39 @@ MeshColor HeightField::generateMeshColor(double heightMax, double squareSize)
     {
       int iterator = i * this->length + j;
 
-      Color color1;
-      Color color2;
-      if (this->height[i][j] == 0)
+      if (i > 0 && j > 0)
       {
-        cols[iterator] = Color(0,127,159);
-      }
-      else if (this->height[i][j] < 0.04)
-      {
-        cols[iterator] = Color(245, 223, 152);
-      }
-      else
-      {
-        color1 = Color(82,204,168);
-        color2 = Color(176,213,76);
-        cols[iterator] = this->getColorBetweenGradient(color1, color2, this->height[i][j]*0.96);
+        // Compute X and Y slope (Distance = 1 and height between 0 and 1)
+        double slopeAngle1 = height[i][j] - height[i-1][j];
+        double slopeAngle2 = height[i][j] - height[i][j-1];
+
+        // Compute Norm of the vector obtained (pente between 0 and 1)
+        double pente = Norm(Vector(slopeAngle1, slopeAngle2, 0));
+
+        // Choice of colors
+        Color color1;
+        Color color2;
+        if (mult*pente < 0.5)
+        {
+          color1 = Color(89, 189, 64);
+          color2 = Color(0, 0, 0);
+        }
+        else
+        {
+          color1 = Color(110, 110, 110);
+          color2 = Color(0, 0, 0);
+        }
+
+        if (height[i][j] > 0.8) {
+          color1 = Color(255, 255, 255);
+          color2 = Color(35, 35, 35);
+        }
+        cols[iterator] = this->getColorBetweenGradient(color1, color2, mult*pente);
       }
     }
   }
 
   return MeshColor(plane, cols, plane.VertexIndexes());
-}
-
-// https://iquilezles.org/articles/smin/
-double HeightField::smoothMax(double a, double b, double k)
-{
-  k = -k;
-  return smoothMin(a, b, k);
-}
-
-double HeightField::smoothMin(double a, double b, double k)
-{
-  double h = std::clamp((b - a + k) / (2 * k), 0.0, 1.0);
-  return a * h + b * (1 - h) - k * h * (1 - h);
 }
 
 void HeightField::flatten(int x, int y, double radius, double floor, double strength)

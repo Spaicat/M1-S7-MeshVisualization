@@ -20,9 +20,10 @@ private:
   MeshColor meshColor;		//!< Mesh.
 
   HeightField hf;
+  Mesh heightFieldPlane;
   int widthSize;
   int maxHeight;
-  bool isColorsChecked;
+  int slopeCoeff;
   int flattenX;
   int flattenY;
 
@@ -42,7 +43,6 @@ public slots:
   void TorusMeshExample();
   void CapsuleMeshExample();
   void GenerateHeightField();
-  void SetColorsChecked(bool);
   void SphereImplicitExample();
   void ResetCamera();
   void UpdateMaterial();
@@ -51,6 +51,8 @@ public slots:
   void SetWidthSize(QString);
   void SetMaxHeight(int);
   void SetMaxHeight(QString);
+  void SetSlopeCoeff(int);
+  void SetSlopeCoeff(QString);
   void SetFlattenX(int);
   void SetFlattenX(QString);
   void SetFlattenY(int);

@@ -26,7 +26,9 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
     widthSize = 5;
     uiw->widthSize->setText(QString::number(widthSize));
     uiw->widthSizeSlider->setValue(widthSize);
-    isColorsChecked = false;
+    slopeCoeff = 1;
+    uiw->colorSlider->setValue(slopeCoeff);
+    uiw->colorSlope->setText(QString::number(slopeCoeff));
 
     flattenX = 0;
     flattenY = 0;
@@ -57,11 +59,13 @@ void MainWindow::CreateActions()
     // HeightField buttons
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
-    connect(uiw->withColors, SIGNAL(clicked(bool)), this, SLOT(SetColorsChecked(bool)));
     connect(uiw->widthSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetWidthSize(int)));
     connect(uiw->widthSize, SIGNAL(textChanged(QString)), this, SLOT(SetWidthSize(QString)));
     connect(uiw->heightMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
     connect(uiw->heightMax, SIGNAL(textChanged(QString)), this, SLOT(SetMaxHeight(QString)));
+    connect(uiw->colorSlider, SIGNAL(valueChanged(int)), this, SLOT(SetSlopeCoeff(int)));
+    connect(uiw->colorSlope, SIGNAL(textChanged(QString)), this, SLOT(SetSlopeCoeff(QString)));
+
     connect(uiw->flattenXSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenX(int)));
     connect(uiw->flattenX, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenX(QString)));
     connect(uiw->flattenYSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenY(int)));
@@ -177,7 +181,7 @@ void MainWindow::SphereImplicitExample()
 void MainWindow::UpdateGeometry()
 {
     meshWidget->ClearAll();
-    meshWidget->AddMesh("BoxMesh", meshColor);
+    meshWidget->AddMesh("Mesh", meshColor);
 
     uiw->lineEdit->setText(QString::number(meshColor.Vertexes()));
     uiw->lineEdit_2->setText(QString::number(meshColor.Triangles()));
@@ -219,24 +223,12 @@ void MainWindow::LoadFile()
 
 void MainWindow::GenerateHeightField()
 {
-  if (this->isColorsChecked)
-  {
-    meshColor = this->hf.generateMeshColor((double)this->maxHeight/50, (double)this->widthSize/500);
-  }
-  else
-  {
-    Mesh heightField = this->hf.generateMesh((double)this->maxHeight/50, (double)this->widthSize/500);
-    meshColor = MeshColor(heightField);
-  }
+  heightFieldPlane = this->hf.generateMesh((double)this->maxHeight/50, (double)this->widthSize/500);
+  meshColor = this->hf.generateMeshColor(this->heightFieldPlane, this->slopeCoeff);
 
   uiw->flattenXSlider->setMaximum(this->hf.getWidth());
   uiw->flattenYSlider->setMaximum(this->hf.getLength());
   UpdateGeometry();
-}
-
-void MainWindow::SetColorsChecked(bool isChecked)
-{
-  this->isColorsChecked = isChecked;
 }
 
 void MainWindow::SetWidthSize(int size)
@@ -261,6 +253,18 @@ void MainWindow::SetMaxHeight(QString max)
 {
   this->maxHeight = max.toInt();
   uiw->heightMaxSlider->setValue(maxHeight);
+}
+
+void MainWindow::SetSlopeCoeff(int coeff)
+{
+  this->slopeCoeff = coeff;
+  uiw->colorSlope->setText(QString::number(slopeCoeff));
+}
+
+void MainWindow::SetSlopeCoeff(QString coeff)
+{
+  this->slopeCoeff = coeff.toInt();
+  uiw->colorSlider->setValue(slopeCoeff);
 }
 
 void MainWindow::SetFlattenX(int x)
