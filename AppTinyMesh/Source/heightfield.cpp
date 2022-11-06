@@ -145,35 +145,52 @@ MeshColor HeightField::generateMeshColor(Mesh& plane, double mult)
     {
       int iterator = i * this->length + j;
 
+      // Compute X and Y slope (Distance = 1 and height between 0 and 1)
+      double slopeAngle1 = 0;
+      double slopeAngle2 = 0;
       if (i > 0 && j > 0)
       {
-        // Compute X and Y slope (Distance = 1 and height between 0 and 1)
-        double slopeAngle1 = height[i][j] - height[i-1][j];
-        double slopeAngle2 = height[i][j] - height[i][j-1];
-
-        // Compute Norm of the vector obtained (pente between 0 and 1)
-        double pente = Norm(Vector(slopeAngle1, slopeAngle2, 0));
-
-        // Choice of colors
-        Color color1;
-        Color color2;
-        if (mult*pente < 0.5)
-        {
-          color1 = Color(89, 189, 64);
-          color2 = Color(0, 0, 0);
-        }
-        else
-        {
-          color1 = Color(110, 110, 110);
-          color2 = Color(0, 0, 0);
-        }
-
-        if (height[i][j] > 0.8) {
-          color1 = Color(255, 255, 255);
-          color2 = Color(35, 35, 35);
-        }
-        cols[iterator] = this->getColorBetweenGradient(color1, color2, mult*pente);
+        slopeAngle1 = height[i][j] - height[i-1][j];
+        slopeAngle2 = height[i][j] - height[i][j-1];
       }
+      else if (i > 0)
+      {
+        slopeAngle1 = height[i][j] - height[i-1][j];
+        slopeAngle2 = height[i][j] - height[i][j+1];
+      }
+      else if (j > 0)
+      {
+        slopeAngle1 = height[i][j] - height[i+1][j];
+        slopeAngle2 = height[i][j] - height[i][j-1];
+      }
+      else
+      {
+        slopeAngle1 = height[i][j] - height[i+1][j];
+        slopeAngle2 = height[i][j] - height[i][j+1];
+      }
+
+      // Compute Norm of the vector obtained (pente between 0 and 1)
+      double pente = Norm(Vector(slopeAngle1, slopeAngle2, 0));
+
+      // Compute color gradient
+      Color color1;
+      Color color2;
+      if (mult*pente < 0.5)
+      {
+        color1 = Color(89, 189, 64);
+        color2 = Color(0, 0, 0);
+      }
+      else
+      {
+        color1 = Color(110, 110, 110);
+        color2 = Color(0, 0, 0);
+      }
+
+      if (height[i][j] > 0.8) {
+        color1 = Color(255, 255, 255);
+        color2 = Color(35, 35, 35);
+      }
+      cols[iterator] = this->getColorBetweenGradient(color1, color2, mult*pente);
     }
   }
 
