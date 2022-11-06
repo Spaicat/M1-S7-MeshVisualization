@@ -18,6 +18,7 @@ private:
 
   MeshWidget* meshWidget;   //!< Viewer
   MeshColor meshColor;		//!< Mesh.
+  int rotation;
 
   HeightField hf;
   Mesh heightFieldPlane;
@@ -26,6 +27,7 @@ private:
   int slopeCoeff;
   int flattenX;
   int flattenY;
+  int flattenRadius;
 
 public:
   MainWindow();
@@ -47,6 +49,18 @@ public slots:
   void ResetCamera();
   void UpdateMaterial();
   void LoadFile();
+  void SetRotate(int);
+  void Rotation();
+  void Scale1();
+  void Scale2();
+  void Scale3();
+  void Scale4();
+  void TranslationLeft();
+  void TranslationRight();
+  void TranslationBehind();
+  void TranslationInFront();
+  void TranslationTop();
+  void TranslationBottom();
   void SetWidthSize(int);
   void SetWidthSize(QString);
   void SetMaxHeight(int);
@@ -57,6 +71,8 @@ public slots:
   void SetFlattenX(QString);
   void SetFlattenY(int);
   void SetFlattenY(QString);
+  void SetFlattenRadius(int);
+  void SetFlattenRadius(QString);
   void Flatten();
 };
 

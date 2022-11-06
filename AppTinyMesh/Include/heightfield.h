@@ -29,6 +29,6 @@ class HeightField
 
         Mesh generateMesh(double, double);
         MeshColor generateMeshColor(Mesh&, double);
-        void flatten(int x, int y, double radius, double, double);
+        void flatten(int, int, double, double, double);
         static HeightField randomNoise();
 };

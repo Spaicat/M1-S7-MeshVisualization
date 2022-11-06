@@ -2,6 +2,7 @@
 #include "implicits.h"
 #include "ui_interface.h"
 #include <QFileDialog>
+#include <QElapsedTimer>
 
 MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
 {
@@ -15,10 +16,13 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
     GLlayout->setContentsMargins(0, 0, 0, 0);
     uiw->widget_GL->setLayout(GLlayout);
 
+    rotation = 45;
+    uiw->rotationDegrees->setValue(rotation);
+
     // Creation des connect
     CreateActions();
 
-    // Initialisation vide de HeightField
+    // Initialisation de HeightField
     hf = HeightField();
     maxHeight = 50;
     uiw->heightMax->setText(QString::number(maxHeight));
@@ -56,6 +60,19 @@ void MainWindow::CreateActions()
     connect(uiw->radioShadingButton_1, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_2, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
 
+    connect(uiw->rotationDegrees, SIGNAL(valueChanged(int)), this, SLOT(SetRotate(int)));
+    connect(uiw->rotateButton, SIGNAL(clicked()), this, SLOT(Rotation()));
+    connect(uiw->translateLeftBtn, SIGNAL(clicked()), this, SLOT(TranslationLeft()));
+    connect(uiw->translateRightBtn, SIGNAL(clicked()), this, SLOT(TranslationRight()));
+    connect(uiw->translateBehindBtn, SIGNAL(clicked()), this, SLOT(TranslationBehind()));
+    connect(uiw->translateInFrontBtn, SIGNAL(clicked()), this, SLOT(TranslationInFront()));
+    connect(uiw->translateTopBtn, SIGNAL(clicked()), this, SLOT(TranslationTop()));
+    connect(uiw->translateBottomBtn, SIGNAL(clicked()), this, SLOT(TranslationBottom()));
+    connect(uiw->scale1Btn, SIGNAL(clicked()), this, SLOT(Scale1()));
+    connect(uiw->scale2Btn, SIGNAL(clicked()), this, SLOT(Scale2()));
+    connect(uiw->scale3Btn, SIGNAL(clicked()), this, SLOT(Scale3()));
+    connect(uiw->scale4Btn, SIGNAL(clicked()), this, SLOT(Scale4()));
+
     // HeightField buttons
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
@@ -70,6 +87,8 @@ void MainWindow::CreateActions()
     connect(uiw->flattenX, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenX(QString)));
     connect(uiw->flattenYSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenY(int)));
     connect(uiw->flattenY, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenY(QString)));
+    connect(uiw->flattenRadiusSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenRadius(int)));
+    connect(uiw->flattenRadius, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenRadius(QString)));
     connect(uiw->flattenBtn, SIGNAL(clicked()), this, SLOT(Flatten()));
 
     // Widget edition
@@ -180,11 +199,14 @@ void MainWindow::SphereImplicitExample()
 
 void MainWindow::UpdateGeometry()
 {
+    QElapsedTimer timer;
+    timer.start();
     meshWidget->ClearAll();
     meshWidget->AddMesh("Mesh", meshColor);
 
     uiw->lineEdit->setText(QString::number(meshColor.Vertexes()));
     uiw->lineEdit_2->setText(QString::number(meshColor.Triangles()));
+    uiw->lineEdit_3->setText(QString::number(timer.elapsed()));
 
     UpdateMaterial();
 }
@@ -226,8 +248,87 @@ void MainWindow::GenerateHeightField()
   heightFieldPlane = this->hf.generateMesh((double)this->maxHeight/50, (double)this->widthSize/500);
   meshColor = this->hf.generateMeshColor(this->heightFieldPlane, this->slopeCoeff);
 
-  uiw->flattenXSlider->setMaximum(this->hf.getWidth());
-  uiw->flattenYSlider->setMaximum(this->hf.getLength());
+  uiw->flattenXSlider->setMaximum(this->hf.getWidth()-1);
+  uiw->flattenYSlider->setMaximum(this->hf.getLength()-1);
+  UpdateGeometry();
+}
+
+void MainWindow::SetRotate(int degrees)
+{
+  this->rotation = degrees;
+}
+
+void MainWindow::Rotation()
+{
+  Matrix rotationMatrix = Matrix();
+  if (uiw->rotationXRadio->isChecked())
+    rotationMatrix = Matrix::rotationX(this->rotation);
+  else if (uiw->rotationYRadio->isChecked())
+    rotationMatrix = Matrix::rotationY(this->rotation);
+  else
+    rotationMatrix = Matrix::rotationZ(this->rotation);
+
+  this->meshColor.Transform(rotationMatrix);
+  UpdateGeometry();
+}
+
+void MainWindow::Scale1()
+{
+  this->meshColor.Transform(Matrix::scale(0.5));
+  UpdateGeometry();
+}
+
+void MainWindow::Scale2()
+{
+  this->meshColor.Transform(Matrix::scale(0.75));
+  UpdateGeometry();
+}
+
+void MainWindow::Scale3()
+{
+  this->meshColor.Transform(Matrix::scale(1.25));
+  UpdateGeometry();
+}
+
+void MainWindow::Scale4()
+{
+  this->meshColor.Transform(Matrix::scale(1.5));
+  UpdateGeometry();
+}
+
+void MainWindow::TranslationLeft()
+{
+  this->meshColor.Translate(Vector(-1, 0, 0));
+  UpdateGeometry();
+}
+
+void MainWindow::TranslationRight()
+{
+  this->meshColor.Translate(Vector(1, 0, 0));
+  UpdateGeometry();
+}
+
+void MainWindow::TranslationBehind()
+{
+  this->meshColor.Translate(Vector(0, 1, 0));
+  UpdateGeometry();
+}
+
+void MainWindow::TranslationInFront()
+{
+  this->meshColor.Translate(Vector(0, -1, 0));
+  UpdateGeometry();
+}
+
+void MainWindow::TranslationTop()
+{
+  this->meshColor.Translate(Vector(0, 0, 1));
+  UpdateGeometry();
+}
+
+void MainWindow::TranslationBottom()
+{
+  this->meshColor.Translate(Vector(0, 0, -1));
   UpdateGeometry();
 }
 
@@ -291,9 +392,21 @@ void MainWindow::SetFlattenY(QString y)
   uiw->flattenYSlider->setValue(flattenY);
 }
 
+void MainWindow::SetFlattenRadius(int radius)
+{
+  this->flattenRadius = radius;
+  uiw->flattenRadius->setText(QString::number(flattenRadius));
+}
+
+void MainWindow::SetFlattenRadius(QString radius)
+{
+  this->flattenRadius = radius.toInt();
+  uiw->flattenRadiusSlider->setValue(flattenRadius);
+}
+
 void MainWindow::Flatten()
 {
-  this->hf.flatten(this->flattenX, this->flattenY, 100, this->hf[flattenX][flattenY], 1);
+  this->hf.flatten(this->flattenX, this->flattenY, this->flattenRadius, this->hf[flattenX][flattenY], 1);
   GenerateHeightField();
   UpdateGeometry();
 }
