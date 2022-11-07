@@ -12,11 +12,13 @@ class Capsule
         double Height() const;
 };
 
+//! Returns the radius of the capsule.
 inline double Capsule::Radius() const
 {
   return radius;
 }
 
+//! Returns the height of the capsule.
 inline double Capsule::Height() const
 {
   return height;

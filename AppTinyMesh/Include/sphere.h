@@ -13,6 +13,7 @@ class Sphere
         double Radius() const;
 };
 
+//! Returns the radius of the sphere.
 inline double Sphere::Radius() const
 {
   return radius;

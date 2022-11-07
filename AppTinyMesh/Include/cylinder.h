@@ -12,11 +12,13 @@ class Cylinder
         double Height() const;
 };
 
+//! Returns the radius of the cylinder.
 inline double Cylinder::Radius() const
 {
   return radius;
 }
 
+//! Returns the height of the cylinder.
 inline double Cylinder::Height() const
 {
   return height;

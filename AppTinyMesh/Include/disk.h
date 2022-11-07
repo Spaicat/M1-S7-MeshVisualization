@@ -13,6 +13,7 @@ class Disk
         double Radius() const;
 };
 
+//! Returns the radius of the disk.
 inline double Disk::Radius() const
 {
   return radius;

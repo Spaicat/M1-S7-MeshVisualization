@@ -6,8 +6,6 @@
 #include "meshcolor.h"
 #include "color.h"
 
-#include "mathematics.h"
-
 class HeightField
 {
     protected:

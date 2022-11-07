@@ -122,8 +122,6 @@ public:
 
   Box GetBox() const;
 
-  void Scale(double);
-
   void SmoothNormals();
 
   // Constructors from core classes

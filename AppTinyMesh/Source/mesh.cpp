@@ -205,6 +205,13 @@ Mesh::Mesh(const Box& box)
   AddTriangle(6, 7, 2, 3);
 }
 
+/*!
+\brief Creates an axis aligned disk.
+
+The object has n+1 vertices, 1 normal and n triangles.
+\param disk The disk.
+\param n The resolution (number of subdivision).
+*/
 Mesh::Mesh(const Disk& disk, int n)
 {
   // Vertices
@@ -235,6 +242,13 @@ Mesh::Mesh(const Disk& disk, int n)
   }
 }
 
+/*!
+\brief Creates an axis aligned cylinder.
+
+The object has 2*n+2 vertices, n+2 normals and 3*n triangles.
+\param cylinder The cylinder.
+\param n The resolution (number of subdivision).
+*/
 Mesh::Mesh(const Cylinder& cylinder, int n)
 {
   // Vertices
@@ -256,8 +270,8 @@ Mesh::Mesh(const Cylinder& cylinder, int n)
   }
 
   // Reserve space for the triangle array
-  varray.reserve((4*n) * 3);
-  narray.reserve((4*n) * 3);
+  varray.reserve((3*n) * 3);
+  narray.reserve((3*n) * 3);
 
   for (int i = 2; i <= n*2; i+=2)
   {
@@ -280,10 +294,17 @@ Mesh::Mesh(const Cylinder& cylinder, int n)
   }
 }
 
+/*!
+\brief Creates an axis aligned sphere.
+
+The object has n*(n-1) + 2 vertices, n*n normals and n*n triangles.
+\param sphere The sphere.
+\param n The resolution (number of subdivision).
+*/
 Mesh::Mesh(const Sphere& sphere, int n)
 {
   // Vertices
-  vertices.resize(n*n + 2);
+  vertices.resize(n*(n-1) + 2);
 
   for (int i = 0; i < n-1; i++)
   {
@@ -303,7 +324,7 @@ Mesh::Mesh(const Sphere& sphere, int n)
   narray.reserve((n * n) * 3);
 
   // Top and Bottom vertices and triangles
-  int lastElement = n*(n-1) + 2;
+  int lastElement = n*(n-1) + 1;
   vertices[0] = Vector(0, 0, sphere.Radius());
   normals.push_back(Vector(0, 0, 1));
   vertices[lastElement] = Vector(0, 0, -sphere.Radius());
@@ -344,6 +365,14 @@ Mesh::Mesh(const Sphere& sphere, int n)
   }
 }
 
+/*!
+\brief Creates an axis aligned torus.
+
+The object has n_toroidal*n_poloidal vertices, n_toroidal*n_poloidal normals and n_toroidal*n_poloidal triangles.
+\param torus The torus.
+\param n_toroidal The resolution of toroidal direction.
+\param n_poloidal The resolution of poloidal direction.
+*/
 Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
 {
   // Vertices
@@ -391,10 +420,17 @@ Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
   }
 }
 
+/*!
+\brief Creates an axis aligned capsule.
+
+The object has n*(n-1) + 2 vertices, n*n normals and n*n triangles.
+\param capsule The capsule.
+\param n The resolution (number of subdivision).
+*/
 Mesh::Mesh(const Capsule& capsule, int n)
 {
   // Vertices
-  vertices.resize(n*n + 2);
+  vertices.resize(n*(n-1) + 2);
 
   for (int i = 0; i < n-1; i++)
   {
@@ -421,7 +457,7 @@ Mesh::Mesh(const Capsule& capsule, int n)
   narray.reserve((n * n) * 3);
 
   // Top and Bottom vertices and triangles
-  int lastElement = n*(n-1) + 2;
+  int lastElement = n*(n-1) + 1;
   vertices[0] = Vector(0, 0, (capsule.Height() / 2) + capsule.Radius());
   normals.push_back(Vector(0, 0, 1));
   vertices[lastElement] = Vector(0, 0, - (capsule.Height() / 2) - capsule.Radius());
@@ -462,22 +498,48 @@ Mesh::Mesh(const Capsule& capsule, int n)
   }
 }
 
+/*!
+\brief Operation to transform the mesh (Rotation, Scale).
+
+Apply the transformation matrix to each vertices (and normals) of the mesh.
+\param m The matrix.
+*/
 void Mesh::Transform(const Matrix& m)
 {
   for (int i = 0; i < vertices.size(); i++)
   {
     vertices[i] = m * vertices[i];
   }
+  for (int i = 0; i < normals.size(); i++)
+  {
+    normals[i] = m * normals[i];
+  }
 }
 
+/*!
+\brief Operation to translate the mesh.
+
+Apply the a translation to each vertices (and normals) of the mesh.
+\param v The vector tranlating each vertices.
+*/
 void Mesh::Translate(const Vector& v)
 {
   for (int i = 0; i < vertices.size(); i++)
   {
     vertices[i] += v;
   }
+  for (int i = 0; i < normals.size(); i++)
+  {
+    normals[i] += normals[i];
+  }
 }
 
+/*!
+\brief Operation to merge the mesh with another one.
+
+Add vertices and normals to the current mesh.
+\param m The mesh to merge to the current mesh.
+*/
 void Mesh::Merge(const Mesh& m)
 {
   int thisVertices = this->Vertexes();
@@ -503,6 +565,15 @@ void Mesh::Merge(const Mesh& m)
   }
 }
 
+/*!
+\brief Operation to translate vertices located in a sphere.
+
+Each vertices in the sphere (given in params) is translated in one direction.
+The closer to the center of the sphere is the vertex, the stronger is the translation.
+\param center The center of the sphere.
+\param radius The radius of the sphere.
+\param direction The vector direction that indicate where to translate to and the "strength".
+*/
 void Mesh::SphereWarp(const Vector& center, double radius, const Vector& direction)
 {
   double rad = pow(radius, 2);
@@ -515,28 +586,6 @@ void Mesh::SphereWarp(const Vector& center, double radius, const Vector& directi
         vertices[i] += (radius-sqrt(distance)) * direction;
     }
   }
-}
-
-/*!
-\brief Scale the mesh.
-\param s Scaling factor.
-*/
-void Mesh::Scale(double s)
-{
-    // Vertexes
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        vertices[i] *= s;
-    }
-
-    if (s < 0.0)
-    {
-        // Normals
-        for (int i = 0; i < normals.size(); i++)
-        {
-            normals[i] = -normals[i];
-        }
-    }
 }
 
 

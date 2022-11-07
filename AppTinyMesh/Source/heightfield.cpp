@@ -66,26 +66,40 @@ HeightField::HeightField(QImage image)
   }
 }
 
-std::vector<double> HeightField::operator[](int n) const
+//! Gets the i-th coordinate of the height field.
+std::vector<double> HeightField::operator[](int i) const
 {
-  return this->height[n];
+  return this->height[i];
 }
 
-std::vector<double>& HeightField::operator[](int n)
+//! Returns the i-th coordinate of height field.
+std::vector<double>& HeightField::operator[](int i)
 {
-  return this->height[n];
+  return this->height[i];
 }
 
+/*!
+\brief Get the width.
+*/
 int HeightField::getWidth()
 {
   return this->width;
 }
 
+/*!
+\brief Get the length.
+*/
 int HeightField::getLength()
 {
   return this->width;
 }
 
+/*!
+\brief Generate a mesh with the object parameters.
+\param heightMax Max height that the mesh can't exceed.
+\param squareSize Size of one square (4 vertices) of the mesh.
+\return The mesh generated.
+*/
 Mesh HeightField::generateMesh(double heightMax, double squareSize)
 {
   std::vector<Vector> vertices;
@@ -133,6 +147,12 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
   return plane;
 }
 
+/*!
+\brief Color an height field mesh based on the slope.
+\param plane The height field mesh to be colored.
+\param mult Coefficient to amplify the slope (thus the color).
+\return The mesh color generated.
+*/
 MeshColor HeightField::generateMeshColor(Mesh& plane, double mult)
 {
   Color gradColor1 = Color();
@@ -197,6 +217,15 @@ MeshColor HeightField::generateMeshColor(Mesh& plane, double mult)
   return MeshColor(plane, cols, plane.VertexIndexes());
 }
 
+/*!
+\brief Flatten a part (in a radius) of the height field (with gradation to the side).
+\param x The X position in the height field corresponding to the center of the flatten operation.
+\param y The Y position in the height field corresponding to the center of the flatten operation.
+\param radius The radius of the area that will be flatten.
+\param floor The floor height to flatten to (The goal).
+\param strength Coefficient to amplify the strength of the flattening.
+\return The mesh color generated.
+*/
 void HeightField::flatten(int x, int y, double radius, double floor, double strength)
 {
   double rad = pow(radius, 2);
@@ -207,7 +236,8 @@ void HeightField::flatten(int x, int y, double radius, double floor, double stre
       double distance = pow((i-x), 2) + pow((j-y), 2);
       if (distance < rad)
       {
-        double strengthCalc = (1 - (distance / rad)) * (1 - (distance / rad)) * strength;
+        // Compute a gradient (Flattening strength is stronger as we get closer to the center)
+        double strengthCalc = pow((1 - (distance / rad)), 2) * strength;
         height[i][j] = strengthCalc * floor + (1 - strengthCalc) * height[i][j];
       }
     }
