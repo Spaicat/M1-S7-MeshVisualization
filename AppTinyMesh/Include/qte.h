@@ -44,6 +44,7 @@ public slots:
   void SphereMeshExample();
   void TorusMeshExample();
   void CapsuleMeshExample();
+  void MergedMeshExample();
   void GenerateHeightField();
   void SphereImplicitExample();
   void ResetCamera();

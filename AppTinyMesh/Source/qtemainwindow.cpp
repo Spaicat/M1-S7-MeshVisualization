@@ -55,6 +55,7 @@ void MainWindow::CreateActions()
     connect(uiw->torusMesh, SIGNAL(clicked()), this, SLOT(TorusMeshExample()));
     connect(uiw->capsuleMesh, SIGNAL(clicked()), this, SLOT(CapsuleMeshExample()));
     connect(uiw->sphereImplicit, SIGNAL(clicked()), this, SLOT(SphereImplicitExample()));
+    connect(uiw->mergedMesh, SIGNAL(clicked()), this, SLOT(MergedMeshExample()));
     connect(uiw->resetcameraButton, SIGNAL(clicked()), this, SLOT(ResetCamera()));
     connect(uiw->wireframe, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_1, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
@@ -154,6 +155,46 @@ void MainWindow::CapsuleMeshExample()
     Mesh capsuleMesh = Mesh(Capsule(4, 2), 7);
 
     meshColor = MeshColor(capsuleMesh);
+    UpdateGeometry();
+}
+
+void MainWindow::MergedMeshExample()
+{
+    Mesh mergedMesh = Mesh();
+
+    Mesh boxMesh = Mesh(Box(1.0));
+
+    AnalyticScalarField implicit;
+    Mesh sphereImplicitMesh;
+    implicit.Polygonize(31, sphereImplicitMesh, Box(2.0));
+    sphereImplicitMesh.Translate(Vector(3, 3, 0));
+
+    Mesh diskMesh = Mesh(Disk(1), 32);
+    diskMesh.Translate(Vector(6, 6, 0));
+
+    Mesh cylinderMesh = Mesh(Cylinder(2, 1), 32);
+    cylinderMesh.Translate(Vector(9, 9, 0));
+
+    Mesh sphereMesh = Mesh(Sphere(1), 32);
+    sphereMesh.Translate(Vector(12, 6, 0));
+
+    Mesh torusMesh = Mesh(Torus(1, 0.5), 32, 32);
+    torusMesh.Translate(Vector(15, 3, 0));
+
+    Mesh capsuleMesh = Mesh(Capsule(2, 1), 32);
+    capsuleMesh.Translate(Vector(18, 0, 0));
+
+    mergedMesh.Merge(boxMesh);
+    mergedMesh.Merge(sphereImplicitMesh);
+    mergedMesh.Merge(diskMesh);
+    mergedMesh.Merge(cylinderMesh);
+    mergedMesh.Merge(sphereMesh);
+    mergedMesh.Merge(torusMesh);
+    mergedMesh.Merge(capsuleMesh);
+
+    mergedMesh.Translate(Vector(-9, -4.5, 0));
+
+    meshColor = MeshColor(mergedMesh);
     UpdateGeometry();
 }
 
