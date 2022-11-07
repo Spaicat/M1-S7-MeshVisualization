@@ -326,9 +326,9 @@ Mesh::Mesh(const Sphere& sphere, int n)
   // Top and Bottom vertices and triangles
   int lastElement = n*(n-1) + 1;
   vertices[0] = Vector(0, 0, sphere.Radius());
-  normals.push_back(Vector(0, 0, 1));
-  vertices[lastElement] = Vector(0, 0, -sphere.Radius());
   normals.push_back(Vector(0, 0, -1));
+  vertices[lastElement] = Vector(0, 0, -sphere.Radius());
+  normals.push_back(Vector(0, 0, 1));
 
   for (int i = 0; i < n; i++)
   {
@@ -355,7 +355,7 @@ Mesh::Mesh(const Sphere& sphere, int n)
       // Normal - Cross product
       Vector v1 = vertices[secondI] - vertices[firstI];
       Vector v2 = vertices[thirdI] - vertices[firstI];
-      Vector triangleNormal = v1 / v2;
+      Vector triangleNormal = v2 / v1;
       normals.push_back(triangleNormal);
 
       // Triangles
@@ -459,9 +459,9 @@ Mesh::Mesh(const Capsule& capsule, int n)
   // Top and Bottom vertices and triangles
   int lastElement = n*(n-1) + 1;
   vertices[0] = Vector(0, 0, (capsule.Height() / 2) + capsule.Radius());
-  normals.push_back(Vector(0, 0, 1));
-  vertices[lastElement] = Vector(0, 0, - (capsule.Height() / 2) - capsule.Radius());
   normals.push_back(Vector(0, 0, -1));
+  vertices[lastElement] = Vector(0, 0, - (capsule.Height() / 2) - capsule.Radius());
+  normals.push_back(Vector(0, 0, 1));
 
   for (int i = 0; i < n; i++)
   {
@@ -488,7 +488,7 @@ Mesh::Mesh(const Capsule& capsule, int n)
       // Normal - Cross product
       Vector v1 = vertices[secondI] - vertices[firstI];
       Vector v2 = vertices[thirdI] - vertices[firstI];
-      Vector triangleNormal = v1 / v2;
+      Vector triangleNormal = v2 / v1;
       normals.push_back(triangleNormal);
 
       // Triangles
