@@ -65,17 +65,11 @@ public slots:
   void TranslationBottom();
   void SetResolution(int);
   void SetWidthSize(int);
-  void SetWidthSize(QString);
   void SetMaxHeight(int);
-  void SetMaxHeight(QString);
   void SetSlopeCoeff(int);
-  void SetSlopeCoeff(QString);
   void SetFlattenX(int);
-  void SetFlattenX(QString);
   void SetFlattenY(int);
-  void SetFlattenY(QString);
   void SetFlattenRadius(int);
-  void SetFlattenRadius(QString);
   void Flatten();
 };
 

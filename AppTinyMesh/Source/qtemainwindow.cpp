@@ -28,17 +28,24 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
     // Initialisation de HeightField
     hf = HeightField();
     maxHeight = 50;
-    uiw->heightMax->setText(QString::number(maxHeight));
+    uiw->heightMax->setValue(maxHeight);
     uiw->heightMaxSlider->setValue(maxHeight);
     widthSize = 5;
-    uiw->widthSize->setText(QString::number(widthSize));
+    uiw->widthSize->setValue(widthSize);
     uiw->widthSizeSlider->setValue(widthSize);
     slopeCoeff = 1;
+    uiw->colorSlope->setValue(slopeCoeff);
     uiw->colorSlider->setValue(slopeCoeff);
-    uiw->colorSlope->setText(QString::number(slopeCoeff));
 
     flattenX = 0;
+    uiw->flattenX->setValue(flattenX);
+    uiw->flattenXSlider->setValue(flattenX);
     flattenY = 0;
+    uiw->flattenY->setValue(flattenY);
+    uiw->flattenYSlider->setValue(flattenY);
+    flattenRadius = 100;
+    uiw->flattenRadius->setValue(flattenRadius);
+    uiw->flattenRadiusSlider->setValue(flattenRadius);
 
     meshWidget->SetCamera(Camera(Vector(10, 0, 0), Vector(0.0, 0.0, 0.0)));
 }
@@ -83,18 +90,15 @@ void MainWindow::CreateActions()
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
     connect(uiw->widthSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetWidthSize(int)));
-    connect(uiw->widthSize, SIGNAL(textChanged(QString)), this, SLOT(SetWidthSize(QString)));
     connect(uiw->heightMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
-    connect(uiw->heightMax, SIGNAL(textChanged(QString)), this, SLOT(SetMaxHeight(QString)));
     connect(uiw->colorSlider, SIGNAL(valueChanged(int)), this, SLOT(SetSlopeCoeff(int)));
-    connect(uiw->colorSlope, SIGNAL(textChanged(QString)), this, SLOT(SetSlopeCoeff(QString)));
 
     connect(uiw->flattenXSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenX(int)));
-    connect(uiw->flattenX, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenX(QString)));
+    connect(uiw->flattenX, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenX(int)));
     connect(uiw->flattenYSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenY(int)));
-    connect(uiw->flattenY, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenY(QString)));
+    connect(uiw->flattenY, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenY(int)));
     connect(uiw->flattenRadiusSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenRadius(int)));
-    connect(uiw->flattenRadius, SIGNAL(textChanged(QString)), this, SLOT(SetFlattenRadius(QString)));
+    connect(uiw->flattenRadius, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenRadius(int)));
     connect(uiw->flattenBtn, SIGNAL(clicked()), this, SLOT(Flatten()));
 
     // Widget edition
@@ -271,7 +275,9 @@ void MainWindow::GenerateHeightField()
   meshColor = this->hf.generateMeshColor(this->heightFieldPlane, this->slopeCoeff);
 
   uiw->flattenXSlider->setMaximum(this->hf.getWidth()-1);
+  uiw->flattenX->setMaximum(this->hf.getWidth()-1);
   uiw->flattenYSlider->setMaximum(this->hf.getLength()-1);
+  uiw->flattenY->setMaximum(this->hf.getLength()-1);
   UpdateGeometry();
 }
 
@@ -364,78 +370,50 @@ void MainWindow::SetResolution(int size)
 void MainWindow::SetWidthSize(int size)
 {
   this->widthSize = size;
-  uiw->widthSize->setText(QString::number(widthSize));
-}
-
-void MainWindow::SetWidthSize(QString size)
-{
-  this->widthSize = size.toInt();
+  uiw->widthSize->setValue(widthSize);
   uiw->widthSizeSlider->setValue(widthSize);
 }
 
 void MainWindow::SetMaxHeight(int max)
 {
   this->maxHeight = max;
-  uiw->heightMax->setText(QString::number(maxHeight));
-}
-
-void MainWindow::SetMaxHeight(QString max)
-{
-  this->maxHeight = max.toInt();
+  uiw->heightMax->setValue(maxHeight);
   uiw->heightMaxSlider->setValue(maxHeight);
 }
 
 void MainWindow::SetSlopeCoeff(int coeff)
 {
   this->slopeCoeff = coeff;
-  uiw->colorSlope->setText(QString::number(slopeCoeff));
-}
-
-void MainWindow::SetSlopeCoeff(QString coeff)
-{
-  this->slopeCoeff = coeff.toInt();
+  uiw->colorSlope->setValue(slopeCoeff);
   uiw->colorSlider->setValue(slopeCoeff);
 }
 
 void MainWindow::SetFlattenX(int x)
 {
   this->flattenX = x;
-  uiw->flattenX->setText(QString::number(flattenX));
-}
-
-void MainWindow::SetFlattenX(QString x)
-{
-  this->flattenX = x.toInt();
+  uiw->flattenX->setValue(flattenX);
   uiw->flattenXSlider->setValue(flattenX);
 }
 
 void MainWindow::SetFlattenY(int y)
 {
   this->flattenY = y;
-  uiw->flattenY->setText(QString::number(flattenY));
-}
-
-void MainWindow::SetFlattenY(QString y)
-{
-  this->flattenY = y.toInt();
+  uiw->flattenY->setValue(flattenY);
   uiw->flattenYSlider->setValue(flattenY);
 }
 
 void MainWindow::SetFlattenRadius(int radius)
 {
   this->flattenRadius = radius;
-  uiw->flattenRadius->setText(QString::number(flattenRadius));
-}
-
-void MainWindow::SetFlattenRadius(QString radius)
-{
-  this->flattenRadius = radius.toInt();
+  uiw->flattenRadius->setValue(flattenRadius);
   uiw->flattenRadiusSlider->setValue(flattenRadius);
 }
 
 void MainWindow::Flatten()
 {
-  this->hf.flatten(this->flattenX, this->flattenY, this->flattenRadius, this->hf[flattenX][flattenY], 1);
-  GenerateHeightField();
-  UpdateGeometry();
+  if (this->hf.getWidth() != 0 && this->hf.getLength() != 0) {
+    this->hf.flatten(this->flattenX, this->flattenY, this->flattenRadius, this->hf[flattenX][flattenY], 1);
+    GenerateHeightField();
+    UpdateGeometry();
+  }
 }

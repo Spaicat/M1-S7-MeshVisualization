@@ -269,6 +269,9 @@ p, li { white-space: pre-wrap; }
           <height>31</height>
          </rect>
         </property>
+        <property name="minimum">
+         <number>3</number>
+        </property>
         <property name="maximum">
          <number>100</number>
         </property>
@@ -300,6 +303,12 @@ p, li { white-space: pre-wrap; }
           <width>211</width>
           <height>31</height>
          </rect>
+        </property>
+        <property name="minimum">
+         <number>3</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -360,16 +369,6 @@ p, li { white-space: pre-wrap; }
          <string>Generate</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="widthSize">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>100</y>
-          <width>91</width>
-          <height>31</height>
-         </rect>
-        </property>
-       </widget>
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
@@ -394,16 +393,6 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Max height</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="heightMax">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>160</y>
-          <width>91</width>
-          <height>31</height>
-         </rect>
         </property>
        </widget>
        <widget class="QSlider" name="widthSizeSlider">
@@ -453,21 +442,14 @@ p, li { white-space: pre-wrap; }
           <height>31</height>
          </rect>
         </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
         <property name="maximum">
          <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="colorSlope">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>220</y>
-          <width>91</width>
-          <height>31</height>
-         </rect>
         </property>
        </widget>
        <widget class="QLabel" name="label_7">
@@ -481,6 +463,54 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Slope color coefficient</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="widthSize">
+        <property name="geometry">
+         <rect>
+          <x>11</x>
+          <y>100</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="heightMax">
+        <property name="geometry">
+         <rect>
+          <x>11</x>
+          <y>160</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="colorSlope">
+        <property name="geometry">
+         <rect>
+          <x>11</x>
+          <y>220</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
         </property>
        </widget>
       </widget>
@@ -505,6 +535,12 @@ p, li { white-space: pre-wrap; }
           <height>31</height>
          </rect>
         </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -517,6 +553,9 @@ p, li { white-space: pre-wrap; }
           <width>191</width>
           <height>31</height>
          </rect>
+        </property>
+        <property name="maximum">
+         <number>100</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -533,26 +572,6 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Flatten</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="flattenX">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>30</y>
-          <width>91</width>
-          <height>31</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="flattenY">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>70</y>
-          <width>91</width>
-          <height>31</height>
-         </rect>
         </property>
        </widget>
        <widget class="QLabel" name="label_5">
@@ -581,16 +600,6 @@ p, li { white-space: pre-wrap; }
          <string>Y</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="flattenRadius">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>130</y>
-          <width>91</width>
-          <height>31</height>
-         </rect>
-        </property>
-       </widget>
        <widget class="QSlider" name="flattenRadiusSlider">
         <property name="geometry">
          <rect>
@@ -599,6 +608,9 @@ p, li { white-space: pre-wrap; }
           <width>211</width>
           <height>31</height>
          </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
         </property>
         <property name="maximum">
          <number>200</number>
@@ -618,6 +630,57 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="text">
          <string>Radius</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="flattenX">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>30</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="flattenY">
+        <property name="geometry">
+         <rect>
+          <x>31</x>
+          <y>70</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="flattenRadius">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>130</y>
+          <width>91</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="value">
+         <number>100</number>
         </property>
        </widget>
       </widget>
