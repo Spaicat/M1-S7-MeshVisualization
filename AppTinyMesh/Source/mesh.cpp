@@ -388,7 +388,6 @@ Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
       double y = std::sin(theta_poloidal) * ((std::cos(theta_toroidal) * torus.Thickness()) + torus.Radius());
       double z = std::sin(theta_toroidal) * torus.Thickness();
       vertices[j + n_poloidal * i] = Vector(x, y, z);
-      normals.push_back(Vector(x, y, z));
     }
   }
 
@@ -414,8 +413,8 @@ Mesh::Mesh(const Torus& torus, int n_toroidal, int n_poloidal)
       normals.push_back(triangleNormal);
 
       // Trianles
-      AddTriangle(firstI, secondI, thirdI, firstI);
-      AddTriangle(secondI, thirdI, fourthI, firstI);
+      AddSmoothTriangle(firstI, firstI, secondI, firstI, thirdI, firstI);
+      AddSmoothTriangle(secondI, firstI, thirdI, firstI, fourthI, firstI);
     }
   }
 }
