@@ -18,6 +18,9 @@ MainWindow::MainWindow() : QMainWindow(), uiw(new Ui::Assets)
 
     rotation = 45;
     uiw->rotationDegrees->setValue(rotation);
+    resolution = 16;
+    uiw->resolution->setValue(resolution);
+    uiw->resolutionSlider->setValue(resolution);
 
     // Creation des connect
     CreateActions();
@@ -60,6 +63,8 @@ void MainWindow::CreateActions()
     connect(uiw->wireframe, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_1, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_2, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
+    connect(uiw->resolutionSlider, SIGNAL(valueChanged(int)), this, SLOT(SetResolution(int)));
+    connect(uiw->resolution, SIGNAL(valueChanged(int)), this, SLOT(SetResolution(int)));
 
     connect(uiw->rotationDegrees, SIGNAL(valueChanged(int)), this, SLOT(SetRotate(int)));
     connect(uiw->rotateButton, SIGNAL(clicked()), this, SLOT(Rotation()));
@@ -120,7 +125,7 @@ void MainWindow::BoxMeshExample()
 
 void MainWindow::DiskMeshExample()
 {
-    Mesh diskMesh = Mesh(Disk(2), 32);
+    Mesh diskMesh = Mesh(Disk(2), resolution);
 
     meshColor = MeshColor(diskMesh);
     UpdateGeometry();
@@ -128,7 +133,7 @@ void MainWindow::DiskMeshExample()
 
 void MainWindow::CylinderMeshExample()
 {
-    Mesh cylinderMesh = Mesh(Cylinder(4, 2), 64);
+    Mesh cylinderMesh = Mesh(Cylinder(4, 2), resolution);
 
     meshColor = MeshColor(cylinderMesh);
     UpdateGeometry();
@@ -136,7 +141,7 @@ void MainWindow::CylinderMeshExample()
 
 void MainWindow::SphereMeshExample()
 {
-    Mesh sphereMesh = Mesh(Sphere(3), 64);
+    Mesh sphereMesh = Mesh(Sphere(3), resolution);
 
     meshColor = MeshColor(sphereMesh);
     UpdateGeometry();
@@ -144,7 +149,7 @@ void MainWindow::SphereMeshExample()
 
 void MainWindow::TorusMeshExample()
 {
-    Mesh torusMesh = Mesh(Torus(3, 2), 32, 32);
+    Mesh torusMesh = Mesh(Torus(3, 2), resolution, resolution);
 
     meshColor = MeshColor(torusMesh);
     UpdateGeometry();
@@ -152,7 +157,7 @@ void MainWindow::TorusMeshExample()
 
 void MainWindow::CapsuleMeshExample()
 {
-    Mesh capsuleMesh = Mesh(Capsule(4, 2), 7);
+    Mesh capsuleMesh = Mesh(Capsule(4, 2), resolution);
 
     meshColor = MeshColor(capsuleMesh);
     UpdateGeometry();
@@ -169,19 +174,19 @@ void MainWindow::MergedMeshExample()
     implicit.Polygonize(31, sphereImplicitMesh, Box(2.0));
     sphereImplicitMesh.Translate(Vector(3, 3, 0));
 
-    Mesh diskMesh = Mesh(Disk(1), 32);
+    Mesh diskMesh = Mesh(Disk(1), resolution);
     diskMesh.Translate(Vector(6, 6, 0));
 
-    Mesh cylinderMesh = Mesh(Cylinder(2, 1), 32);
+    Mesh cylinderMesh = Mesh(Cylinder(2, 1), resolution);
     cylinderMesh.Translate(Vector(9, 9, 0));
 
-    Mesh sphereMesh = Mesh(Sphere(1), 32);
+    Mesh sphereMesh = Mesh(Sphere(1), resolution);
     sphereMesh.Translate(Vector(12, 6, 0));
 
-    Mesh torusMesh = Mesh(Torus(1, 0.5), 32, 32);
+    Mesh torusMesh = Mesh(Torus(1, 0.5), resolution, resolution);
     torusMesh.Translate(Vector(15, 3, 0));
 
-    Mesh capsuleMesh = Mesh(Capsule(2, 1), 32);
+    Mesh capsuleMesh = Mesh(Capsule(2, 1), resolution);
     capsuleMesh.Translate(Vector(18, 0, 0));
 
     mergedMesh.Merge(boxMesh);
@@ -347,6 +352,13 @@ void MainWindow::TranslationBottom()
 {
   this->meshColor.Translate(Vector(0, 0, -1));
   UpdateGeometry();
+}
+
+void MainWindow::SetResolution(int size)
+{
+  this->resolution = size;
+  uiw->resolution->setValue(resolution);
+  uiw->resolutionSlider->setValue(resolution);
 }
 
 void MainWindow::SetWidthSize(int size)

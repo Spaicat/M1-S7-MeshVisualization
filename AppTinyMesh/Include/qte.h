@@ -22,6 +22,7 @@ private:
 
   HeightField hf;
   Mesh heightFieldPlane;
+  int resolution;
   int widthSize;
   int maxHeight;
   int slopeCoeff;
@@ -62,6 +63,7 @@ public slots:
   void TranslationInFront();
   void TranslationTop();
   void TranslationBottom();
+  void SetResolution(int);
   void SetWidthSize(int);
   void SetWidthSize(QString);
   void SetMaxHeight(int);
