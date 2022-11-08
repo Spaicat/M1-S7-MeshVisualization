@@ -446,7 +446,7 @@ p, li { white-space: pre-wrap; }
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>200</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -510,7 +510,7 @@ p, li { white-space: pre-wrap; }
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>200</number>
         </property>
        </widget>
       </widget>

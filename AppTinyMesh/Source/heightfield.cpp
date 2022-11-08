@@ -113,7 +113,7 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
   {
     for (int j = 0; j < this->length; j++)
     {
-      vertices.push_back(Vector(i*squareSize - offsetX, j*squareSize - offsetY, height[i][j]*heightMax));
+      vertices.push_back(Vector(i*squareSize - offsetX, (this->length-j)*squareSize - offsetY, height[i][j]*heightMax));
 
       if (i > 0 && j > 0)
       {
@@ -126,12 +126,12 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
         // Normals of the two triangles
         Vector v1 = vertices[firstI] - vertices[secondI];
         Vector v2 = vertices[fourthI] - vertices[secondI];
-        Vector triangleNormal = v1 / v2;
+        Vector triangleNormal = v2 / v1;
         normals.push_back(triangleNormal);
 
         v1 = vertices[fourthI] - vertices[thirdI];
         v2 = vertices[firstI] - vertices[thirdI];
-        triangleNormal = v1 / v2;
+        triangleNormal = v2 / v1;
         normals.push_back(triangleNormal);
 
         normalCount += 2;
@@ -195,20 +195,23 @@ MeshColor HeightField::generateMeshColor(Mesh& plane, double mult)
       // Compute color gradient
       Color color1;
       Color color2;
-      if (mult*pente < 0.5)
-      {
-        color1 = Color(89, 189, 64);
-        color2 = Color(0, 0, 0);
-      }
-      else
-      {
-        color1 = Color(110, 110, 110);
-        color2 = Color(0, 0, 0);
-      }
 
       if (height[i][j] > 0.8) {
         color1 = Color(255, 255, 255);
         color2 = Color(35, 35, 35);
+      }
+      else
+      {
+        if (mult*pente < 0.5)
+        {
+          color1 = Color(89, 189, 64);
+          color2 = Color(0, 0, 0);
+        }
+        else
+        {
+          color1 = Color(110, 110, 110);
+          color2 = Color(0, 0, 0);
+        }
       }
       cols[iterator] = this->getColorBetweenGradient(color1, color2, mult*pente);
     }
