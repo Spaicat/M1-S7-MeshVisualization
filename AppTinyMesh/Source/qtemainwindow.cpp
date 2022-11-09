@@ -291,8 +291,7 @@ void MainWindow::LoadFile()
 
 void MainWindow::GenerateHeightField()
 {
-  heightFieldPlane = this->hf.generateMesh((double)this->maxHeight/50, (double)this->widthSize/500);
-  meshColor = this->hf.generateMeshColor(this->heightFieldPlane, this->slopeCoeff);
+  meshColor = this->hf.generateMesh((double)this->maxHeight/50, (double)this->widthSize/500, this->slopeCoeff);
 
   uiw->flattenXSlider->setMaximum(this->hf.getWidth()-1);
   uiw->flattenX->setMaximum(this->hf.getWidth()-1);

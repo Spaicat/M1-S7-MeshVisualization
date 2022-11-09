@@ -25,7 +25,7 @@ class HeightField
         int getWidth();
         int getLength();
 
-        Mesh generateMesh(double, double);
-        MeshColor generateMeshColor(Mesh&, double);
+        MeshColor generateMesh(double, double, double);
+        Color generateColor(int, int, double);
         void flatten(int, int, double, double, double);
 };

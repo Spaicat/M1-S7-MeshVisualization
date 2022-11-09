@@ -100,12 +100,14 @@ int HeightField::getLength()
 \param squareSize Size of one square (4 vertices) of the mesh.
 \return The mesh generated.
 */
-Mesh HeightField::generateMesh(double heightMax, double squareSize)
+MeshColor HeightField::generateMesh(double heightMax, double squareSize, double mult)
 {
   std::vector<Vector> vertices;
   std::vector<Vector> normals;
   std::vector<int> va;
   std::vector<int> na;
+  std::vector<Color> cols;
+  cols.resize(this->width * this->length);
   int normalCount = -1;
   double offsetX = (this->width*squareSize) / 2;
   double offsetY = (this->length*squareSize) / 2;
@@ -139,85 +141,77 @@ Mesh HeightField::generateMesh(double heightMax, double squareSize)
         // Triangle
         AddTriangle(firstI, fourthI, secondI, normalCount-1, va, na);
         AddTriangle(firstI, fourthI, thirdI, normalCount, va, na);
+
+        // Color
+        int iterator = i * this->length + j;
+        cols[iterator] = generateColor(i, j, mult);
       }
     }
   }
 
   Mesh plane = Mesh(vertices, normals, va, na);
-  return plane;
+  return MeshColor(plane, cols, plane.VertexIndexes());
 }
 
 /*!
 \brief Color an height field mesh based on the slope.
-\param plane The height field mesh to be colored.
-\param mult Coefficient to amplify the slope (thus the color).
+\param i The i coordinate of the vertice to color.
+\param j The j coordinate of the vertice to color.
+\param mult Coefficient to amplify the slope coefficient (thus the color).
 \return The mesh color generated.
 */
-MeshColor HeightField::generateMeshColor(Mesh& plane, double mult)
+Color HeightField::generateColor(int i, int j, double mult)
 {
-  Color gradColor1 = Color();
-  std::vector<Color> cols;
-  cols.resize(plane.Vertexes());
-  std::vector<int> na = plane.NormalIndexes();
-  for (int i = 0; i < this->width; i++)
+  // Compute X and Y slope (Distance = 1 and height between 0 and 1)
+  double slopeAngle1 = 0;
+  double slopeAngle2 = 0;
+  if (i > 0 && j > 0)
   {
-    for (int j = 0; j < this->length; j++)
+    slopeAngle1 = height[i][j] - height[i-1][j];
+    slopeAngle2 = height[i][j] - height[i][j-1];
+  }
+  else if (i > 0)
+  {
+    slopeAngle1 = height[i][j] - height[i-1][j];
+    slopeAngle2 = height[i][j] - height[i][j+1];
+  }
+  else if (j > 0)
+  {
+    slopeAngle1 = height[i][j] - height[i+1][j];
+    slopeAngle2 = height[i][j] - height[i][j-1];
+  }
+  else
+  {
+    slopeAngle1 = height[i][j] - height[i+1][j];
+    slopeAngle2 = height[i][j] - height[i][j+1];
+  }
+
+  // Compute Norm of the vector obtained (pente between 0 and 1)
+  double pente = Norm(Vector(slopeAngle1, slopeAngle2, 0));
+
+  // Compute color gradient
+  Color color1;
+  Color color2;
+
+  if (height[i][j] > 0.8) {
+    color1 = Color(255, 255, 255);
+    color2 = Color(35, 35, 35);
+  }
+  else
+  {
+    if (mult*pente < 0.5)
     {
-      int iterator = i * this->length + j;
-
-      // Compute X and Y slope (Distance = 1 and height between 0 and 1)
-      double slopeAngle1 = 0;
-      double slopeAngle2 = 0;
-      if (i > 0 && j > 0)
-      {
-        slopeAngle1 = height[i][j] - height[i-1][j];
-        slopeAngle2 = height[i][j] - height[i][j-1];
-      }
-      else if (i > 0)
-      {
-        slopeAngle1 = height[i][j] - height[i-1][j];
-        slopeAngle2 = height[i][j] - height[i][j+1];
-      }
-      else if (j > 0)
-      {
-        slopeAngle1 = height[i][j] - height[i+1][j];
-        slopeAngle2 = height[i][j] - height[i][j-1];
-      }
-      else
-      {
-        slopeAngle1 = height[i][j] - height[i+1][j];
-        slopeAngle2 = height[i][j] - height[i][j+1];
-      }
-
-      // Compute Norm of the vector obtained (pente between 0 and 1)
-      double pente = Norm(Vector(slopeAngle1, slopeAngle2, 0));
-
-      // Compute color gradient
-      Color color1;
-      Color color2;
-
-      if (height[i][j] > 0.8) {
-        color1 = Color(255, 255, 255);
-        color2 = Color(35, 35, 35);
-      }
-      else
-      {
-        if (mult*pente < 0.5)
-        {
-          color1 = Color(89, 189, 64);
-          color2 = Color(0, 0, 0);
-        }
-        else
-        {
-          color1 = Color(110, 110, 110);
-          color2 = Color(0, 0, 0);
-        }
-      }
-      cols[iterator] = this->getColorBetweenGradient(color1, color2, mult*pente);
+      color1 = Color(89, 189, 64);
+      color2 = Color(0, 0, 0);
+    }
+    else
+    {
+      color1 = Color(110, 110, 110);
+      color2 = Color(0, 0, 0);
     }
   }
 
-  return MeshColor(plane, cols, plane.VertexIndexes());
+  return this->getColorBetweenGradient(color1, color2, mult*pente);
 }
 
 /*!
