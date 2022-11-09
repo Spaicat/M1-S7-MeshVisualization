@@ -66,6 +66,7 @@ void MainWindow::CreateActions()
     connect(uiw->capsuleMesh, SIGNAL(clicked()), this, SLOT(CapsuleMeshExample()));
     connect(uiw->sphereImplicit, SIGNAL(clicked()), this, SLOT(SphereImplicitExample()));
     connect(uiw->mergedMesh, SIGNAL(clicked()), this, SLOT(MergedMeshExample()));
+    connect(uiw->deformedMesh, SIGNAL(clicked()), this, SLOT(DeformedMeshExample()));
     connect(uiw->resetcameraButton, SIGNAL(clicked()), this, SLOT(ResetCamera()));
     connect(uiw->wireframe, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
     connect(uiw->radioShadingButton_1, SIGNAL(clicked()), this, SLOT(UpdateMaterial()));
@@ -204,6 +205,15 @@ void MainWindow::MergedMeshExample()
     mergedMesh.Translate(Vector(-9, -4.5, 0));
 
     meshColor = MeshColor(mergedMesh);
+    UpdateGeometry();
+}
+
+void MainWindow::DeformedMeshExample()
+{
+    Mesh sphereMesh = Mesh(Sphere(2), resolution);
+    sphereMesh.SphereWarp(Vector(1, 1, 1), 1.5, Vector(1, 1, 1));
+    sphereMesh.SphereWarp(Vector(-1, -1, -1), 1.5, Vector(1, 1, 1));
+    meshColor = MeshColor(sphereMesh);
     UpdateGeometry();
 }
 
