@@ -183,6 +183,7 @@ void MainWindow::MergedMeshExample()
     diskMesh.Translate(Vector(6, 6, 0));
 
     Mesh cylinderMesh = Mesh(Cylinder(2, 1), resolution);
+    cylinderMesh.Transform(Matrix::rotationY(45));
     cylinderMesh.Translate(Vector(9, 9, 0));
 
     Mesh sphereMesh = Mesh(Sphere(1), resolution);
@@ -194,6 +195,14 @@ void MainWindow::MergedMeshExample()
     Mesh capsuleMesh = Mesh(Capsule(2, 1), resolution);
     capsuleMesh.Translate(Vector(18, 0, 0));
 
+    Mesh deformedMesh = Mesh(Sphere(1), resolution);
+    deformedMesh.SphereWarp(Vector(1, 1, 1), 1.5, Vector(1, 1, 1));
+    deformedMesh.SphereWarp(Vector(-1, -1, -1), 1.5, Vector(1, 1, 1));
+    Mesh deformedTorusMesh = Mesh(Torus(2, 0.25), resolution, resolution);
+    deformedMesh.Merge(deformedTorusMesh);
+    deformedMesh.Translate(Vector(9, 0, 0));
+
+
     mergedMesh.Merge(boxMesh);
     mergedMesh.Merge(sphereImplicitMesh);
     mergedMesh.Merge(diskMesh);
@@ -201,6 +210,7 @@ void MainWindow::MergedMeshExample()
     mergedMesh.Merge(sphereMesh);
     mergedMesh.Merge(torusMesh);
     mergedMesh.Merge(capsuleMesh);
+    mergedMesh.Merge(deformedMesh);
 
     mergedMesh.Translate(Vector(-9, -4.5, 0));
 
