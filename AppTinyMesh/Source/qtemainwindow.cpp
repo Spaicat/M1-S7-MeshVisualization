@@ -91,8 +91,11 @@ void MainWindow::CreateActions()
     connect(uiw->fileBtn, SIGNAL(clicked()), this, SLOT(LoadFile()));
     connect(uiw->generateBtn, SIGNAL(clicked()), this, SLOT(GenerateHeightField()));
     connect(uiw->widthSizeSlider, SIGNAL(valueChanged(int)), this, SLOT(SetWidthSize(int)));
+    connect(uiw->widthSize, SIGNAL(valueChanged(int)), this, SLOT(SetWidthSize(int)));
     connect(uiw->heightMaxSlider, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
+    connect(uiw->heightMax, SIGNAL(valueChanged(int)), this, SLOT(SetMaxHeight(int)));
     connect(uiw->colorSlider, SIGNAL(valueChanged(int)), this, SLOT(SetSlopeCoeff(int)));
+    connect(uiw->colorSlope, SIGNAL(valueChanged(int)), this, SLOT(SetSlopeCoeff(int)));
 
     connect(uiw->flattenXSlider, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenX(int)));
     connect(uiw->flattenX, SIGNAL(valueChanged(int)), this, SLOT(SetFlattenX(int)));
