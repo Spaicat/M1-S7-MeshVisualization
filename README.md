@@ -1,41 +1,39 @@
-## Windows
-- First, you must install Qt6 (https://www.qt.io/download, use the open source version). Install the msvc2019_64 compiler only (*Note: other compilers can work too*).
-- Set the "QTDIR64" environment variable to your Qt installation folder (example: "E:\Code\Qt\6.3.0\msvc2019_64")
-- Set the "GLEW_DIR" environment variable to the path "XXX/TinyMesh/Libs/", with XXX the path to your repository.
-- Run the script TinyMesh/Script/AppTinyMeshDeploy.bat
+<h1 align="center">
+Computer graphics 🎨
+</h1>
 
-Finally, open the Visual Studio solution files with Visual Studio 2022 Community, or open the QtCreatorProject.pro with QtCreator. Compile/Build and execute, everything should work.
-*Note: For other IDE, you will have to use the provided CMakeLists.txt to generate the solution files yourself.*
+🎨 A school project of graphics basics and a heightmap vizualisation
 
-## Linux
-- First, you must install Qt6 (https://www.qt.io/download, use the open source version). Install the gcc compiler only (*Note: other compilers can work too*).
-- Install the following packages
-```
-sudo apt-get install g++ libglew-dev freeglut3-dev
-```
-Finally, open the QtCreatorProject.pro with QtCreator. Click on configure, then build and execute, everything should work.
-*Note: For other IDE, you will have to use the provided CMakeLists.txt to generate the solution files yourself.*
+## Basics
 
-## Mac OS/X
-- First, you must install Qt6 (https://www.qt.io/download, use the open source version). Install the gcc compiler only (*Note: other compilers can work too*).
--  Install the following packages (*Note: Depending on your Mac OS/X version, other packages might be needed. Shoot me an email if anything is missing.*
-```
-brew install glew
-```
-Finally, open the QtCreatorProject.pro with QtCreator. Click on configure, then build and execute, everything should work.
-*Note: For other IDE, you will have to use the provided CMakeLists.txt to generate the solution files yourself.*
+<div align="center">
+	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/basics.png" />
+	<p>Union of primitives grouped in the same scene with translations.</p>
+</div>
 
-## Additional notes
-Optionally, you can use your own code (without Qt) to do the windowing and rendering part. In this case, you can extract the following files, which don't have any dependencies apart from the C++ standard library:
- - box.h/.cpp
- - camera.h/.cpp
- - color.h
- - implicits.h/.cpp
- - mathematics.h
- - mesh.h/.cpp (*You must remove the Mesh::LoadObj and Mesh::SaveObj functions, which depends on Qt*)
- - meshcolor.h/.cpp
- - ray.h/.cpp
- 
-## Troubleshooting
-In case of a problem, send me an email describing your error: axel.paris[at]liris.cnrs.fr
+<div align="center">
+	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/stats.png" />
+	<p>Generation statistics of the 5 primitives added (32 “subdivisions” (resolution) for each).</p>
+</div>
 
+<div align="center">
+	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/stats.png" />
+	<p>Generation statistics of the 5 primitives added (32 “subdivisions” (resolution) for each).</p>
+</div>
+
+## Heightmap vizualisation
+
+<div align="center">
+	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/heightmap_normals.png" />
+	<p>Terrain modeling using an image.</p>
+</div>
+
+<div align="center">
+	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/flatten.png" />
+	<p>Local terrain flattening.</p>
+</div>
+
+<div align="center">
+	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/slope.png" />
+	<p>Coloring according to the slope (and the height with the snow).</p>
+</div>
