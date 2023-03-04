@@ -16,11 +16,6 @@ Computer graphics 🎨
 	<p>Generation statistics of the 5 primitives added (32 “subdivisions” (resolution) for each).</p>
 </div>
 
-<div align="center">
-	<img src="https://raw.githubusercontent.com/spaicat/M1-S7-MeshVisualization/master/.github/stats.png" />
-	<p>Generation statistics of the 5 primitives added (32 “subdivisions” (resolution) for each).</p>
-</div>
-
 ## Heightmap vizualisation
 
 <div align="center">
